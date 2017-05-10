@@ -1,0 +1,131 @@
+#u939
+{
+	border-color: #000000;
+	background: #000000 url("../images/57.jpg") no-repeat center center;
+	background-size: cover;
+}
+
+#top,#u939_align_to_page
+{
+	position: relative;
+}
+
+#buttonu8149
+{
+	border-color: #787878;
+	background-color: transparent;
+	position: relative;
+}
+
+#u8155
+{
+	vertical-align: top;
+	position: relative;
+	background: url("../images/u8155.png") no-repeat 0px 0px;
+}
+
+#buttonu8149:hover #u8155
+{
+	background: url("../images/u8155-r.png") no-repeat 0px 0px;
+}
+
+.hidpi #u8155
+{
+	background-image: url("../images/u8155_2x.png");
+	background-size: 180.00000000000006px 34px;
+}
+
+.hidpi #buttonu8149:hover #u8155
+{
+	background-image: url("../images/u8155-r_2x.png");
+	background-size: 180.00000000000006px 34px;
+}
+
+#u8154-4
+{
+	background-color: transparent;
+	position: relative;
+}
+
+#u8154-2
+{
+	font-size: 15px;
+	text-align: center;
+	padding-bottom: 0px;
+	color: #F5F1EE;
+}
+
+#u8001
+{
+	border-style: none;
+	border-color: transparent;
+	background-color: transparent;
+	position: relative;
+}
+
+#u5778
+{
+	border-style: none;
+	border-color: transparent;
+	background-color: #562DE5;
+	color: #F5F1EE;
+	text-align: center;
+	font-size: 18px;
+	line-height: 22px;
+	position: relative;
+}
+
+#u5780
+{
+	border-style: none;
+	border-color: transparent;
+	background-color: #EA2D0F;
+	color: #F5F1EE;
+	text-align: center;
+	font-size: 18px;
+	line-height: 22px;
+	position: relative;
+}
+
+#u5782
+{
+	border-style: none;
+	border-color: transparent;
+	background-color: #367AFF;
+	color: #F5F1EE;
+	text-align: center;
+	font-size: 18px;
+	line-height: 22px;
+	position: relative;
+}
+
+#u5784
+{
+	border-color: #FFFFFF;
+	background-color: #6D8EFF;
+	color: #F5F1EE;
+	text-align: center;
+	font-size: 18px;
+	line-height: 22px;
+	position: relative;
+}
+
+#u8000,#u8141
+{
+	border-style: solid;
+	border-color: #000000;
+	background-color: transparent;
+	position: relative;
+	border-width: 1px 0px 0px;
+}
+
+#u8503
+{
+	background: transparent url("../images/u8568-grad.png") repeat-x left top;
+	background: -webkit-gradient(linear, center top, center bottom, from(rgba(0, 0, 0, 0.2)),color-stop(60%, rgba(0, 0, 0, 0)));
+	background: -webkit-linear-gradient(top,rgba(0, 0, 0, 0.2) ,rgba(0, 0, 0, 0) 60%);
+	background: -o-linear-gradient(top,rgba(0, 0, 0, 0.2) ,rgba(0, 0, 0, 0) 60%);
+	background: linear-gradient(to bottom,rgba(0, 0, 0, 0.2) ,rgba(0, 0, 0, 0) 60%);
+	border-color: #000000;
+}
+

@@ -1,0 +1,58 @@
+<manifest alg="2" build="6" opt="false" iceEnabled="true" exportTarget="other" resolutions="1x,2x" timestamp="1433537846972">
+  <folder name="css">
+    <file name="site_global.css" crc="3969570728"/>
+    <file name="master_footer.css" crc="4086975590" ref="index"/>
+    <file name="index.css" crc="259568430" ref="index"/>
+    <file name="iefonts_index.css" crc="70244047" ref="index"/>
+  </folder>
+  <folder name="scripts">
+    <file name="jquery-1.8.3.min.js" crc="4021225061" ref="phone>index:phone>menu:phone>contact:index"/>
+    <file name="museutils.js" crc="4136605575" ref="phone>index:phone>menu:phone>contact:index"/>
+    <file name="jquery.musepolyfill.bgsize.js" crc="242197875" ref="phone>index:phone>menu:index"/>
+    <file name="jquery.scrolleffects.js" crc="4183300935" ref="phone>index:phone>menu:phone>contact:index"/>
+    <file name="jquery.watch.js" crc="172956391" ref="phone>index:phone>menu:phone>contact:index"/>
+    <file name="pie.js" crc="3827607177" ref="phone>index:index"/>
+    <file name="jquery.musemenu.js" crc="4009181048" ref="phone>index:phone>menu:phone>contact"/>
+    <file name="webpro.js" crc="420478120" ref="phone>index:phone>menu:phone>contact"/>
+    <file name="musewpdisclosure.js" crc="4228034700" ref="phone>index:phone>menu:phone>contact"/>
+    <file name="html5shiv.js" crc="4241844378" ref="phone>index:phone>menu:phone>contact:index"/> 
+    <file name="museredirect.js" crc="305212102" ref="index"/>
+  </folder>
+  <folder name="images">
+    <file name="img-hero.jpg" crc="3897906500" ref="phone>index"/>
+    <file name="gallery-7.jpg" crc="4171781679" ref="phone>menu"/>
+    <file name="57.jpg" crc="4131163221" ref="index"/>
+    <file name="model3.jpg" crc="4204001913" ref="index"/>
+    <file name="model3_2x.jpg" crc="216940292" ref="index"/>
+    <file name="article-2263988-170058b6000005dc-856_306x526.jpg" crc="433518272" ref="index"/>
+    <file name="express-clothing-models.jpg" crc="4079055020" ref="index"/>
+    <file name="express-clothing-models_2x.jpg" crc="3961555983" ref="index"/>
+    <file name="models-without-clothes.jpg" crc="534642050" ref="index"/>
+    <file name="models-without-clothes_2x.jpg" crc="4235378089" ref="index"/>
+    <file name="venus-clothing-models.jpg" crc="4169761875" ref="index"/>
+    <file name="venus-clothing-models_2x.jpg" crc="12199604" ref="index"/>
+    <file name="justice-clothing-models.jpg" crc="4151055857" ref="index"/>
+    <file name="justice-clothing-models_2x.jpg" crc="4140554589" ref="index"/>
+    <file name="random_objects_background.jpg" crc="401268276" ref="index"/>
+    <file name="fore-bird.png" crc="395793534" ref="index"/>
+    <file name="u8155.png" crc="3906959504" ref="index"/>
+    <file name="u8155-r.png" crc="4124479049" ref="index"/>
+    <file name="u8155_2x.png" crc="251724940" ref="index"/>
+    <file name="u8155-r_2x.png" crc="3844402830" ref="index"/>
+  </folder>
+  <folder name="phone">
+    <folder name="css">
+      <file name="master_a-master.css" crc="79320517" ref="phone>index:phone>menu:phone>contact"/>
+      <file name="index.css" crc="267228601" ref="phone>index"/>
+      <file name="iefonts_index.css" crc="107463090" ref="phone>index"/>
+      <file name="menu.css" crc="3967108863" ref="phone>menu"/>
+      <file name="iefonts_menu.css" crc="4147664218" ref="phone>menu"/>
+      <file name="contact.css" crc="3769969763" ref="phone>contact"/>
+      <file name="iefonts_contact.css" crc="20445844" ref="phone>contact"/>
+    </folder>
+    <file name="index.html" crc="56985071" mt="1433523839785" redirect="true"/>
+    <file name="menu.html" crc="316112241" mt="1433525217481" redirect="true"/>
+    <file name="contact.html" crc="292787064" mt="1433537843163" redirect="true"/>
+  </folder>
+  <file name="index.html" crc="4169852602" mt="1433537075534" redirect="true"/>
+</manifest>
