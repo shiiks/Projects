@@ -1,0 +1,35 @@
+So i have minimize the changes and generalise the code now we have to follow 3 simple steps:
+
+1.) Firstly include the PlayAndPause.js file in the head of html tag like this:
+
+<script src="playandpause.js"></script>
+
+& paste the playandpause.js in the folder because i didn't find that file & use this playandpause.js in all other animation.
+
+because it is the updated one.
+
+2.)Now find "handler", replace the function written with this:
+
+         (function() {
+	    var executed= false;
+            return function(controller, event, symbolController){
+	    if(!executed){
+	    executed=true;
+            mysound.play();
+	    controller.goToTimelineByName('Timeline 1');
+	    playButton=document.getElementById(configData.events[0].id);
+            dofirst();
+            }								
+	  }
+    })()	
+
+
+3.) 2 lines above the "handler" u will find "id",
+
+see the id go to html part & find that id ,
+
+in that id u will see a <img> tag ,
+
+in the <img> tag remove the attribute onClick="hideSocialPanels()".
+
+Save the file and run the animation.

@@ -1,0 +1,51 @@
+@font-face {
+font-family: 'AirstreamNF';
+src: url('http://115.112.122.101:8484/Hola/fonts/AirstreamNF.eot');
+src: url('http://115.112.122.101:8484/Hola/fonts/AirstreamNF.eot?#iefix') format('embedded-opentype'), 
+     url('http://115.112.122.101:8484/Hola/fonts/AirstreamNF.woff') format('woff'), 
+     url('http://115.112.122.101:8484/Hola/fonts/AirstreamNF.ttf')  format('truetype'),
+     url('http://115.112.122.101:8484/Hola/fonts/AirstreamNF.svg#svgFontName') format('svg'); 
+}
+
+@font-face {
+font-family: 'Alex Brush';
+src: url('http://115.112.122.101:8484/Hola/fonts/AlexBrushRegular.eot');
+src: url('http://115.112.122.101:8484/Hola/fonts/AlexBrushRegular.eot?#iefix') format('embedded-opentype'), 
+     url('http://115.112.122.101:8484/Hola/fonts/AlexBrushRegular.woff') format('woff'), 
+     url('http://115.112.122.101:8484/Hola/fonts/AlexBrushRegular.ttf')  format('truetype'),
+     url('http://115.112.122.101:8484/Hola/fonts/AlexBrushRegular.otf')  format('opentype'),
+     url('http://115.112.122.101:8484/Hola/fonts/AlexBrushRegular.svg#svgFontName') format('svg'); 
+}
+
+@font-face {
+font-family: 'GoodDog';
+src: url('http://115.112.122.101:8484/Hola/fonts/GoodDog.eot');
+src: url('http://115.112.122.101:8484/Hola/fonts/GoodDog.eot?#iefix') format('embedded-opentype'), 
+     url('http://115.112.122.101:8484/Hola/fonts/GoodDog.woff') format('woff'), 
+     url('http://115.112.122.101:8484/Hola/fonts/GoodDog.ttf')  format('truetype'),
+     url('http://115.112.122.101:8484/Hola/fonts/GoodDog.otf')  format('opentype'),
+     url('http://115.112.122.101:8484/Hola/fonts/GoodDog.svg#svgFontName') format('svg'); 
+}
+
+@font-face {
+font-family: 'Mexcellent';
+src: url('http://115.112.122.101:8484/Hola/fonts/Mexcellent.eot');
+src: url('http://115.112.122.101:8484/Hola/fonts/Mexcellent.eot?#iefix') format('embedded-opentype'), 
+     url('http://115.112.122.101:8484/Hola/fonts/Mexcellent.woff') format('woff'), 
+     url('http://115.112.122.101:8484/Hola/fonts/Mexcellent.ttf')  format('truetype'),
+     url('http://115.112.122.101:8484/Hola/fonts/Mexcellent.svg#svgFontName') format('svg'); 
+}
+
+@font-face {
+font-family: 'Myra 4F Caps';
+src: url('http://115.112.122.101:8484/Hola/fonts/Myra.eot');
+src: url('http://115.112.122.101:8484/Hola/fonts/Myra.eot?#iefix') format('embedded-opentype'), 
+     url('http://115.112.122.101:8484/Hola/fonts/Myra.woff') format('woff'), 
+     url('http://115.112.122.101:8484/Hola/fonts/Myra.ttf')  format('truetype'),
+     url('http://115.112.122.101:8484/Hola/fonts/Myra.svg#svgFontName') format('svg'); 
+}
+
+body{
+ background: url('custom/pattern.png') repeat;
+}
+

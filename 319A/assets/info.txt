@@ -1,0 +1,30 @@
+This folder will be used for assets that are used in this Sencha Animator Project
+
+1st page:
+
+
+2nd page:
+
+receiver name:( 10px 36px 300px 40px )
+font-size:16px;
+font-family: arial;
+font-color:#ffffff;
+text-align:center;
+font-weight:bold;
+
+
+message-txt: ( 19px 86px 280px 180px )
+font-size:16px;
+font-family: arial;
+font-color:#ffffff;
+text-align:center;
+
+
+
+
+3rd page:
+
+
+
+
+

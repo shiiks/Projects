@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html style="height:100%;">
+<!-- Hola Animator Version: 1.5 Build: 219 -->
+<head>
+<meta charset="UTF-8">
+
+
+<title>Alnasr 02 &middot; Made with Hola Animator</title>
+<script src="https://hola-dev.techvedika.com/buzz.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="constant.js"></script>
+<script src="style.js"></script>
+<script src="playandpause.js"></script>
+<link rel="stylesheet" href="style.css"/>
+<script type="text/javascript">
+var mysound;
+var trackerId;
+var redirect_first;
+var url='cardDetails.json';
+$.ajax({
+url: url,
+async: false,
+dataType: "json",
+success: function(data) {
+mysound = new buzz.sound(data.cardDetails.melodyUrl);
+redirect_first = data.cardDetails.goToStart;
+trackerId = data.cardDetails.GATrackerId;
+console.log("SOUND URL"+data.cardDetails.melodyUrl);
+}
+});
+function pauseAudio() 
+{mysound.pause();
+}
+function playAudio() 
+{mysound.play();
+}
+</script>
+
+<script type="text/javascript">
+$(function(){
+$(document).on('click', '.toggl', function(){
+$("[class^=info]").not($(".info_"+this.id)).slideUp("slow");
+$(".info_"+this.id).slideToggle("slow");
+});
+});
+</script>
+
+
+<script type="text/javascript">
+    if (typeof(AN) === "undefined") {
+        var AN = {}
+    }
+    AN.instances = {
+        symbols: [],
+        controllers: []
+    };
+    AN.apiVersion = 1;
+    AN.Controller = function() {
+        return {
+            currentScene: false,
+            userData: {},
+            setConfig: function(a) {
+                AN.instances.controllers.push(this);
+                this.events = a.events;
+                this.prefix = a.cssPrefix;
+                this.projectActions = a.projectActions;
+                this.basePath = a.basePath ? a.basePath : "";
+                this.olElement = document.querySelector("#" + a.parentId + " ol");
+                var d = this.olElement.children;
+                this.useOrmma = a.ormma;
+                this.scenes = [];
+                this.scenesById = {};
+                this.sceneByName = {};
+                var g;
+                for (var e = 0; e < a.scenes.length; e++) {
+                    g = a.scenes[e];
+                    g.element = d[e];
+                    g.timelinesById = {};
+                    g.timelinesByName = {};
+                    for (var c = 0; c < g.timelines.length; c++) {
+                        g.timelinesById[g.timelines[c].id] = g.timelines[c];
+                        g.timelinesByName[g.timelines[c].name] = g.timelines[c]
+                    }
+                    this.scenesById[g.id] = g;
+                    this.scenes.push(g);
+                    if (g.name) {
+                        this.sceneByName[g.name] = g
+                    }
+                }
+                this.setupListeners();
+                this.startSceneByName = this.goToSceneByName;
+                this.startSceneById = this.goToSceneById;
+                this.startSceneByID = this.startSceneById;
+                this.symbolInstancesByHtmlId = {};
+                this.symbolInstancesById = {};
+                this.symbols = [];
+                var h, b, f;
+                for (var e = 0; e < a.symbols.length; e++) {
+                    h = a.symbols[e];
+                    this.symbolInstancesById[h.id] = [];
+                    b = this.olElement.querySelectorAll(".an-symbol-container-" + h.id);
+                    for (var c = 0; c < b.length; c++) {
+                        f = new AN.Symbol();
+                        f.setConfig(b[c], h, this);
+                        this.symbolInstancesByHtmlId[b[c].id] = f;
+                        this.symbolInstancesById[h.id].push(f);
+                        this.symbols.push(f)
+                    }
+                }
+                this.fireAction(this.projectActions, "init");
+                this.goToScene(this.scenes[0])
+            },
+            setupListeners: function() {
+                var l = this;
+                this.browser = "unknown";
+                if (document.body.style.MozAnimationName !== undefined) {
+                    this.browser = "moz"
+                }
+
+                function h(j) {
+                    var i;
+                    if (l.browser === "moz") {
+                        i = j.target;
+                        while (i = i.parentNode) {
+                            if (i === l.currentScene.element) {
+                                l.onAnimationEnd();
+                                return
+                            }
+                        }
+                    } else {
+                        l.onAnimationEnd()
+                    }
+                }
+                this.olElement.addEventListener("webkitAnimationEnd", h, false);
+                this.olElement.addEventListener("animationend", h, false);
+
+                function c(i) {
+                    i.element.addEventListener("mousemove", function(j) {
+                        i.mousemoveAction.call(l.userData, l, j)
+                    }, false)
+                }
+                var g;
+                for (var e = 0; e < this.scenes.length; e++) {
+                    g = this.scenes[e];
+                    if (g.mousemoveAction) {
+                        c(g)
+                    }
+                }
+
+                function a(m, j, i) {
+                    m.addEventListener(j, function(n) {
+                        i.call(l.userData, l, n)
+                    }, false)
+                }
+                var f, b, k;
+                for (var e = 0; e < this.events.length; e++) {
+                    b = this.events[e];
+                    k = b.type;
+                    f = document.getElementById(b.id);
+                    for (var d = 0; d < k.length; d++) {
+                        a(f, k[d], b.handler)
+                    }
+                }
+            },
+            onAnimationEnd: function() {
+                this.runningAnimationCount--;
+                if (this.runningAnimationCount === 0) {
+                    this.onAllAnimationEnd()
+                }
+            },
+            onAllAnimationEnd: function() {
+                var a = this.currentScene.currentTimeline.endWaitTime;
+                if (a) {
+                    var b = this;
+                    this.sceneTimeout = setTimeout(function() {
+                        b.onSceneFinish()
+                    }, a * 1000)
+                } else {
+                    this.onSceneFinish()
+                }
+            },
+            forceRefresh: function(a) {
+                this.forceRefreshValue = a.element.offsetHeight
+            },
+            fireAction: function(b, a) {
+                if (b && b[a]) {
+                    b[a].call(this.userData, this)
+                }
+            },
+            getSymbolByHtmlId: function(a) {
+                return this.symbolInstancesByHtmlId[a]
+            },
+            getSymbolByInstanceId: function(b) {
+                var a = this.olElement.querySelector(".an-symbol-container.an-symbol-" + b);
+                return this.getSymbolByHtmlId(a.id)
+            },
+            getSymbols: function() {
+                return this.symbols
+            },
+            getSymbolsBySymbolMasterId: function(a) {
+                return this.symbolInstancesById[a]
+            },
+            getUserData: function() {
+                return this.userData
+            },
+            getTimelineByIndex: function(a) {
+                return this.currentScene.timelines[a]
+            },
+            getTimelineById: function(a) {
+                return this.currentScene.timelinesById[a]
+            },
+            getTimelineByName: function(a) {
+                return this.currentScene.timelinesByName[a]
+            },
+            getCurrentTimeline: function() {
+                return this.currentScene.currentTimeline
+            },
+            getCurrentScene: function() {
+                return this.currentScene
+            },
+            getSceneByIndex: function(a) {
+                return this.scenes[a]
+            },
+            getSceneById: function(a) {
+                return this.scenesById[a]
+            },
+            getSceneByName: function(a) {
+                return this.sceneByName[a]
+            },
+            goToNextTimeline: function() {
+                var b = this.currentScene.timelines.indexOf(this.currentScene.currentTimeline);
+                var a = Math.min(b + 1, this.currentScene.timelines.length - 1);
+                if (a === b) {
+                    return
+                }
+                this.goToTimelineByIndex(a)
+            },
+            goToPreviousTimeline: function() {
+                var b = this.currentScene.timelines.indexOf(this.currentScene.currentTimeline);
+                var a = Math.max(b - 1, 0);
+                if (b === a) {
+                    return
+                }
+                this.goToTimelineByIndex(a)
+            },
+            goToTimelineById: function(a) {
+                this.goToScene(this.currentScene, this.currentScene.timelinesById[a])
+            },
+            goToTimelineByName: function(a) {
+                this.goToScene(this.currentScene, this.currentScene.timelinesByName[a])
+            },
+            goToTimelineByIndex: function(a) {
+                this.goToScene(this.currentScene, this.currentScene.timelines[a])
+            },
+            goToTimeline: function(a) {
+                this.goToScene(this.currentScene, a)
+            },
+            goToNextScene: function() {
+                var b = this.scenes.indexOf(this.currentScene);
+                var a = Math.min(b + 1, this.scenes.length - 1);
+                if (b === a) {
+                    return
+                }
+                this.goToSceneByIndex(a)
+            },
+            goToPreviousScene: function() {
+                var a = this.scenes.indexOf(this.currentScene);
+                var b = Math.max(a - 1, 0);
+                if (a === b) {
+                    return
+                }
+                this.goToSceneByIndex(b)
+            },
+            goToSceneByIndex: function(a) {
+                this.goToScene(this.scenes[a])
+            },
+            goToSceneByName: function(a) {
+                this.goToScene(this.sceneByName[a])
+            },
+            goToSceneById: function(a, b) {
+                var c = this.scenesById[a];
+                this.goToScene(c, c.timelinesById[b])
+            },
+            goToScene: function(g, f) {
+                var d = g;
+                var e = this.currentScene;
+                var a = f;
+                var c = e ? e.currentTimeline : false;
+                if (a === undefined) {
+                    a = d.timelines[0]
+                }
+                var b = false;
+                if (c === a && e === d) {
+                    b = true
+                } else {
+                    if (e) {
+                        e.element.setAttribute("class", "")
+                    }
+                }
+                this.fireAction(c, "exitAction");
+                clearTimeout(this.sceneTimeout);
+                if (e !== d) {
+                    this.fireAction(e, "exitAction");
+                    this.fireAction(d, "initAction")
+                }
+                this.fireAction(a, "initAction");
+                this.runningAnimationCount = a.animationCount;
+                this.currentScene = d;
+                d.currentTimeline = a;
+                var h = "t-" + a.id;
+                if (b || this.browser === "moz") {
+                    d.element.setAttribute("class", "run restart " + h);
+                    this.forceRefresh(d)
+                }
+                d.element.setAttribute("class", "run " + h);
+                if (!b && this.useOrmma) {
+                    this.ormmaNextScene(d)
+                }
+                this.fireAction(a, "startAction");
+                if (a.animationCount === 0) {
+                    this.onAllAnimationEnd()
+                }
+            },
+            replayScene: function() {
+                console.warn("replayScene is deprecated. Use restartScene instead.");
+                this.restartScene()
+            },
+            restartScene: function() {
+                this.goToScene(this.currentScene)
+            },
+            restartTimeline: function() {
+                this.goToScene(this.currentScene, this.currentScene.currentTimeline)
+            },
+            onSceneFinish: function() {
+                this.fireAction(this.currentScene.currentTimeline, "endAction")
+            },
+            goToURL: function(a) {
+                document.location.href = a
+            },
+            getElementById: function(a) {
+                return document.getElementById(this.getElementIdById(a))
+            },
+            getElementIdById: function(a) {
+                return this.prefix + a
+            },
+            getUrlForLocalAsset: function(b) {
+                var a = "assets/" + b;
+                if (this.basePath) {
+                    a = this.basePath + "/" + a
+                }
+                return a
+            },
+            ormmaNextScene: function(c) {
+                var a = ormma.getState();
+                if (c.dimensions.expanded) {
+                    var i = ormma.getMaxSize();
+                    if (a !== "expanded") {
+                        ormma.expand({
+                            x: 0,
+                            y: 0,
+                            width: i.width,
+                            height: i.height
+                        })
+                    }
+                    var b = "";
+                    var d = c.element.offsetHeight;
+                    var g = c.element.offsetWidth;
+                    var e = (i.height - d) / 2;
+                    var h = (i.width - g) / 2;
+                    b += " translate3d(" + Math.round(h) + "px," + Math.round(e) + "px,0)";
+                    if (c.dimensions.fit) {
+                        var f = Math.min(i.width / g, i.height / d);
+                        b += " scale3d(" + f + "," + f + ",1)"
+                    }
+                    c.element.style.webkitTransform = b
+                } else {
+                    if (a === "expanded") {
+                        ormma.close()
+                    }
+                    ormma.resize(c.dimensions.width, c.dimensions.height)
+                }
+            }
+        }
+    };
+    window.addEventListener('load', function() {
+        var configData = {
+            parentId: 'p5pg5QXlX-an-anim',
+            cssPrefix: 'p5pg5QXlX-',
+            ormma: false,
+            mraid: false,
+            layout: {
+                "type": "absolute",
+                "width": 320,
+                "height": 416
+            },
+            scenes: [{
+                id: 0,
+                dimensions: {
+                    height: 100,
+                    width: 100,
+                    expanded: false,
+                    fit: false
+                },
+                timelines: [{
+                    id: "y69LXh",
+                    name: 'Timeline 2',
+                    animationCount: 0,
+                    duration: 0,
+                    lastKeyframeTime: 0
+                }, {
+                    id: "0",
+                    name: 'Timeline 1',
+                    animationCount: 6,
+                    duration: 0,
+                    lastKeyframeTime: 9.501,
+                    endAction: function(controller) {
+                        controller.goToNextScene();
+                    },
+                    startAction: function(controller, event, symbolController) {
+                        mysound.play();
+                    }
+                }]
+            }, {
+                id: 7,
+                dimensions: {
+                    height: 100,
+                    width: 100,
+                    expanded: false,
+                    fit: false
+                },
+                timelines: [{
+                    id: "0",
+                    name: 'Timeline 1',
+                    animationCount: 4,
+                    duration: 0,
+                    lastKeyframeTime: 8.624,
+                    endAction: function(controller) {
+                        controller.goToNextScene();
+                    }
+                }]
+            }, {
+                id: 4,
+                dimensions: {
+                    height: 100,
+                    width: 100,
+                    expanded: false,
+                    fit: false
+                },
+                timelines: [{
+                    id: "0",
+                    name: 'Timeline 1',
+                    animationCount: 11,
+                    duration: 6.619,
+                    lastKeyframeTime: 8.904,
+                    endAction: function(controller) {
+                        controller.goToNextScene();
+                    }
+                }]
+            }],
+            symbols: [],
+            projectActions: {},
+            events: [{
+                id: "p5pg5QXlX-an-obj-12",
+                type: ['click'],
+                handler: (function(){
+					   var expected=false;
+					   return function(controller, event, symbolController) {
+					   if(!expected){
+					    expected=true;
+                        mysound.play();
+                        controller.goToTimelineByName('Timeline 1');
+						playButton=document.getElementById(configData.events[0].id);
+						dofirst();
+						}	
+					}
+					})()
+            }],
+            externalResources: [{
+                "url": "assets/buzz.js",
+                "type": "js"
+            }]
+        };
+        setTimeout(function() {
+            var controller = new AN.Controller;
+            controller.setConfig(configData);
+        }, 0);
+    }, false);
+</script>
+
+
+<style type="text/css">
+
+#p5pg5QXlX-an-anim > ol{list-style:none;margin:0;padding:0;}#p5pg5QXlX-an-anim > ol > li{margin:0;padding:0;display:none;}#p5pg5QXlX-an-anim > ol > li.run{display:block;}#p5pg5QXlX-an-anim .p5pg5QXlX-an-stage{overflow:hidden;margin:0;padding:0;}#p5pg5QXlX-an-anim .p5pg5QXlX-an-stage div{position:absolute;}.p5pg5QXlX-an-stage *{margin:0;padding:0;-moz-font-smoothing:antialiased;font-smoothing:antialiased;-webkit-font-smoothing:antialiased;}#p5pg5QXlX-an-anim .p5pg5QXlX-an-stage img{position:absolute;top:0;left:0;}#p5pg5QXlX-an-anim .AN-Scene-Description{display:none;}#p5pg5QXlX-an-anim iframe{border:none;height:100%;width:100%}#p5pg5QXlX-an-anim .p5pg5QXlX-an-stage{position:absolute;top:0;left:0;width:100%;height:100%;}#p5pg5QXlX-an-anim{height:416px;width:320px;position:relative;}#p5pg5QXlX-an-anim{background-color:rgba(255,255,255,1);font-family:"", Arial, Helvetica, Geneva, sans-serif;font-size:10px;line-height:1.3;}#p5pg5QXlX-an-obj-1{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);width:320px;height:416px;top:0;left:0;}#p5pg5QXlX-an-obj-2{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);width:320px;height:416px;top:0;left:0;}#p5pg5QXlX-an-obj-3{-moz-transform:translate(0px, 27px) scale(1, 1.2);transform:translate3d(0px, 27px, 0px) scale3d(1, 1.2, 1);-webkit-transform:translate3d(0px, 27px, 0px) scale3d(1, 1.2, 1);width:320px;height:75px;top:0;left:0;-moz-transform-origin:100% 50%;transform-origin:100% 50%;-webkit-transform-origin:100% 50%;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-3-0{0%{-webkit-transform:translate3d(0px, 27px, 0px) scale3d(1, 1.2, 1);}100%{-webkit-transform:translate3d(0px, 27px, 0px) scale3d(0, 1.2, 1);}}@keyframes ani-p5pg5QXlX-an-obj-3-0{0%{transform:translate3d(0px, 27px, 0px) scale3d(1, 1.2, 1);}100%{transform:translate3d(0px, 27px, 0px) scale3d(0, 1.2, 1);}}@-moz-keyframes ani-p5pg5QXlX-an-obj-3-0{0%{-moz-transform:translate(0px, 27px) scale(1, 1.2);}100%{-moz-transform:translate(0px, 27px) scale(0, 1.2);}}.run.t-0 #p5pg5QXlX-an-obj-3{-moz-animation-name:ani-p5pg5QXlX-an-obj-3-0;animation-name:ani-p5pg5QXlX-an-obj-3-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-3-0;-moz-animation-duration:2s;animation-duration:2s;-webkit-animation-duration:2s;-moz-animation-delay:3.0714s;animation-delay:3.0714s;-webkit-animation-delay:3.0714s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-3{-moz-transform:translate(0px, 27px) scale(0, 1.2);transform:translate3d(0px, 27px, 0px) scale3d(0, 1.2, 1);-webkit-transform:translate3d(0px, 27px, 0px) scale3d(0, 1.2, 1);}.restart.t-0 #p5pg5QXlX-an-obj-3{-moz-transform:translate(0px, 27px) scale(1, 1.2);transform:translate3d(0px, 27px, 0px) scale3d(1, 1.2, 1);-webkit-transform:translate3d(0px, 27px, 0px) scale3d(1, 1.2, 1);}.restart #p5pg5QXlX-an-obj-3{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-4{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);width:320px;height:416px;top:0;left:0;-moz-transform-origin:50% 96%;transform-origin:50% 96%;-webkit-transform-origin:50% 96%;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-4-0{0%{-webkit-transform:translate3d(0px, 0px, 0px) scale3d(3, 3, 1);opacity:0;}100%{-webkit-transform:translate3d(0px, 0px, 0px) scale3d(1, 1, 1);opacity:1;}}@keyframes ani-p5pg5QXlX-an-obj-4-0{0%{transform:translate3d(0px, 0px, 0px) scale3d(3, 3, 1);opacity:0;}100%{transform:translate3d(0px, 0px, 0px) scale3d(1, 1, 1);opacity:1;}}@-moz-keyframes ani-p5pg5QXlX-an-obj-4-0{0%{-moz-transform:translate(0px, 0px) scale(3, 3);opacity:0;}100%{-moz-transform:translate(0px, 0px) scale(1, 1);opacity:1;}}.run.t-0 #p5pg5QXlX-an-obj-4{-moz-animation-name:ani-p5pg5QXlX-an-obj-4-0;animation-name:ani-p5pg5QXlX-an-obj-4-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-4-0;-moz-animation-duration:2.2857s;animation-duration:2.2857s;-webkit-animation-duration:2.2857s;-moz-animation-delay:0.4464s;animation-delay:0.4464s;-webkit-animation-delay:0.4464s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-4{-moz-transform:translate(0px, 0px) scale(1, 1);transform:translate3d(0px, 0px, 0px) scale3d(1, 1, 1);-webkit-transform:translate3d(0px, 0px, 0px) scale3d(1, 1, 1);opacity:1;}.restart.t-0 #p5pg5QXlX-an-obj-4{-moz-transform:translate(0px, 0px) scale(3, 3);transform:translate3d(0px, 0px, 0px) scale3d(3, 3, 1);-webkit-transform:translate3d(0px, 0px, 0px) scale3d(3, 3, 1);opacity:0;}.restart #p5pg5QXlX-an-obj-4{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-5{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);width:320px;height:416px;top:0;left:0;-moz-transform-origin:50% 72%;transform-origin:50% 72%;-webkit-transform-origin:50% 72%;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-5-0{0%{-webkit-transform:translate3d(0px, 0px, 0px) scale3d(3, 3, 1);opacity:0;}100%{-webkit-transform:translate3d(0px, 0px, 0px) scale3d(1, 1, 1);opacity:1;}}@keyframes ani-p5pg5QXlX-an-obj-5-0{0%{transform:translate3d(0px, 0px, 0px) scale3d(3, 3, 1);opacity:0;}100%{transform:translate3d(0px, 0px, 0px) scale3d(1, 1, 1);opacity:1;}}@-moz-keyframes ani-p5pg5QXlX-an-obj-5-0{0%{-moz-transform:translate(0px, 0px) scale(3, 3);opacity:0;}100%{-moz-transform:translate(0px, 0px) scale(1, 1);opacity:1;}}.run.t-0 #p5pg5QXlX-an-obj-5{-moz-animation-name:ani-p5pg5QXlX-an-obj-5-0;animation-name:ani-p5pg5QXlX-an-obj-5-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-5-0;-moz-animation-duration:2.2857s;animation-duration:2.2857s;-webkit-animation-duration:2.2857s;-moz-animation-delay:0.4464s;animation-delay:0.4464s;-webkit-animation-delay:0.4464s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-5{-moz-transform:translate(0px, 0px) scale(1, 1);transform:translate3d(0px, 0px, 0px) scale3d(1, 1, 1);-webkit-transform:translate3d(0px, 0px, 0px) scale3d(1, 1, 1);opacity:1;}.restart.t-0 #p5pg5QXlX-an-obj-5{-moz-transform:translate(0px, 0px) scale(3, 3);transform:translate3d(0px, 0px, 0px) scale3d(3, 3, 1);-webkit-transform:translate3d(0px, 0px, 0px) scale3d(3, 3, 1);opacity:0;}.restart #p5pg5QXlX-an-obj-5{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-6{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);width:320px;height:416px;top:0;left:0;-moz-transform-origin:10% 88%;transform-origin:10% 88%;-webkit-transform-origin:10% 88%;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-6-0{0%{-webkit-transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(-270deg);opacity:0;}100%{-webkit-transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);opacity:1;}}@keyframes ani-p5pg5QXlX-an-obj-6-0{0%{transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(-270deg);opacity:0;}100%{transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);opacity:1;}}@-moz-keyframes ani-p5pg5QXlX-an-obj-6-0{0%{-moz-transform:translate(0px, 0px)   rotate(-270deg);opacity:0;}100%{-moz-transform:translate(0px, 0px)   rotate(0deg);opacity:1;}}.run.t-0 #p5pg5QXlX-an-obj-6{-moz-animation-name:ani-p5pg5QXlX-an-obj-6-0;animation-name:ani-p5pg5QXlX-an-obj-6-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-6-0;-moz-animation-duration:1.7857s;animation-duration:1.7857s;-webkit-animation-duration:1.7857s;-moz-animation-delay:5.2679s;animation-delay:5.2679s;-webkit-animation-delay:5.2679s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-6{-moz-transform:translate(0px, 0px)   rotate(0deg);transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);-webkit-transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);opacity:1;}.restart.t-0 #p5pg5QXlX-an-obj-6{-moz-transform:translate(0px, 0px)   rotate(-270deg);transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(-270deg);-webkit-transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(-270deg);opacity:0;}.restart #p5pg5QXlX-an-obj-6{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-7{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);width:320px;height:416px;top:0;left:0;-moz-transform-origin:95% 87%;transform-origin:95% 87%;-webkit-transform-origin:95% 87%;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-7-0{0%{-webkit-transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(270deg);opacity:0;}100%{-webkit-transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);opacity:1;}}@keyframes ani-p5pg5QXlX-an-obj-7-0{0%{transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(270deg);opacity:0;}100%{transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);opacity:1;}}@-moz-keyframes ani-p5pg5QXlX-an-obj-7-0{0%{-moz-transform:translate(0px, 0px)   rotate(270deg);opacity:0;}100%{-moz-transform:translate(0px, 0px)   rotate(0deg);opacity:1;}}.run.t-0 #p5pg5QXlX-an-obj-7{-moz-animation-name:ani-p5pg5QXlX-an-obj-7-0;animation-name:ani-p5pg5QXlX-an-obj-7-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-7-0;-moz-animation-duration:1.7857s;animation-duration:1.7857s;-webkit-animation-duration:1.7857s;-moz-animation-delay:5.2679s;animation-delay:5.2679s;-webkit-animation-delay:5.2679s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-7{-moz-transform:translate(0px, 0px)   rotate(0deg);transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);-webkit-transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);opacity:1;}.restart.t-0 #p5pg5QXlX-an-obj-7{-moz-transform:translate(0px, 0px)   rotate(270deg);transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(270deg);-webkit-transform:translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(270deg);opacity:0;}.restart #p5pg5QXlX-an-obj-7{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-8{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);width:320px;height:416px;top:0;left:0;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-8-0{0%{-webkit-transform:translate3d(0px, 0px, 0px);opacity:0;}22.2198%{-webkit-transform:translate3d(0px, 0px, 0px);opacity:1;}92.2609%{-webkit-transform:translate3d(0px, 0px, 0px);opacity:1;}100%{-webkit-transform:translate3d(0px, 0px, 0px);opacity:0;}}@keyframes ani-p5pg5QXlX-an-obj-8-0{0%{transform:translate3d(0px, 0px, 0px);opacity:0;}22.2198%{transform:translate3d(0px, 0px, 0px);opacity:1;}92.2609%{transform:translate3d(0px, 0px, 0px);opacity:1;}100%{transform:translate3d(0px, 0px, 0px);opacity:0;}}@-moz-keyframes ani-p5pg5QXlX-an-obj-8-0{0%{-moz-transform:translate(0px, 0px);opacity:0;}22.2198%{-moz-transform:translate(0px, 0px);opacity:1;}92.2609%{-moz-transform:translate(0px, 0px);opacity:1;}100%{-moz-transform:translate(0px, 0px);opacity:0;}}.run.t-0 #p5pg5QXlX-an-obj-8{-moz-animation-name:ani-p5pg5QXlX-an-obj-8-0;animation-name:ani-p5pg5QXlX-an-obj-8-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-8-0;-moz-animation-duration:9.5011s;animation-duration:9.5011s;-webkit-animation-duration:9.5011s;-moz-animation-delay:0s;animation-delay:0s;-webkit-animation-delay:0s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-8{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);opacity:0;}.restart.t-0 #p5pg5QXlX-an-obj-8{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);opacity:0;}.restart #p5pg5QXlX-an-obj-8{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-9{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);width:320px;height:416px;top:0;left:0;}#p5pg5QXlX-an-obj-10{-moz-transform:translate(79px, 121px);transform:translate3d(79px, 121px, 0px);-webkit-transform:translate3d(79px, 121px, 0px);width:161px;height:161px;border-top:1px solid rgba(1,14,13,1);border-right:1px solid rgba(1,14,13,1);border-bottom:1px solid rgba(1,14,13,1);border-left:1px solid rgba(1,14,13,1);border-top-left-radius:500px;border-top-left-radius:500px;-webkit-border-top-left-radius:500px;border-top-right-radius:500px;border-top-right-radius:500px;-webkit-border-top-right-radius:500px;border-bottom-right-radius:500px;border-bottom-right-radius:500px;-webkit-border-bottom-right-radius:500px;border-bottom-left-radius:500px;border-bottom-left-radius:500px;-webkit-border-bottom-left-radius:500px;background-color:rgba(11,11,11,0.6634615384615384);top:0;left:0;opacity:0;}#p5pg5QXlX-an-obj-11{-moz-transform:translate(80px, 125px);transform:translate3d(80px, 125px, 0px);-webkit-transform:translate3d(80px, 125px, 0px);width:163px;height:163px;border-top:1px solid rgba(1,14,13,1);border-right:1px solid rgba(1,14,13,1);border-bottom:1px solid rgba(1,14,13,1);border-left:1px solid rgba(1,14,13,1);border-top-left-radius:500px;border-top-left-radius:500px;-webkit-border-top-left-radius:500px;border-top-right-radius:500px;border-top-right-radius:500px;-webkit-border-top-right-radius:500px;border-bottom-right-radius:500px;border-bottom-right-radius:500px;-webkit-border-bottom-right-radius:500px;border-bottom-left-radius:500px;border-bottom-left-radius:500px;-webkit-border-bottom-left-radius:500px;background-color:rgba(0,0,0,0.6298076923076923);top:0;left:0;}.t-0 #p5pg5QXlX-an-obj-11{-moz-transform:translate(80px, 125px);transform:translate3d(80px, 125px, 0px);-webkit-transform:translate3d(80px, 125px, 0px);opacity:0;}#p5pg5QXlX-an-obj-12{-moz-transform:translate(117px, 162px);transform:translate3d(117px, 162px, 0px);-webkit-transform:translate3d(117px, 162px, 0px);width:89px;height:89px;top:0;left:0;}.t-y69LXh #p5pg5QXlX-an-obj-12{-moz-transform:translate(117px, 162px);transform:translate3d(117px, 162px, 0px);-webkit-transform:translate3d(117px, 162px, 0px);}.t-0 #p5pg5QXlX-an-obj-12{-moz-transform:translate(117px, 162px);transform:translate3d(117px, 162px, 0px);-webkit-transform:translate3d(117px, 162px, 0px);opacity:0;}#p5pg5QXlX-an-obj-13{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);width:320px;height:416px;top:0;left:0;}#p5pg5QXlX-an-obj-14{-moz-transform:translate(10px, 36px);transform:translate3d(10px, 36px, 0px);-webkit-transform:translate3d(10px, 36px, 0px);width:300px;height:40px;top:0;left:0;font-size:16px;font-weight:bold;text-align:center;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-14-0{0%{-webkit-transform:translate3d(10px, -164px, 0px) scale3d(0.07, 1, 1);}100%{-webkit-transform:translate3d(10px, 36px, 0px) scale3d(1, 1, 1);}}@keyframes ani-p5pg5QXlX-an-obj-14-0{0%{transform:translate3d(10px, -164px, 0px) scale3d(0.07, 1, 1);}100%{transform:translate3d(10px, 36px, 0px) scale3d(1, 1, 1);}}@-moz-keyframes ani-p5pg5QXlX-an-obj-14-0{0%{-moz-transform:translate(10px, -164px) scale(0.07, 1);}100%{-moz-transform:translate(10px, 36px) scale(1, 1);}}.run.t-0 #p5pg5QXlX-an-obj-14{-moz-animation-name:ani-p5pg5QXlX-an-obj-14-0;animation-name:ani-p5pg5QXlX-an-obj-14-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-14-0;-moz-animation-duration:1.7143s;animation-duration:1.7143s;-webkit-animation-duration:1.7143s;-moz-animation-delay:0.2857s;animation-delay:0.2857s;-webkit-animation-delay:0.2857s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-14{-moz-transform:translate(10px, 36px) scale(1, 1);transform:translate3d(10px, 36px, 0px) scale3d(1, 1, 1);-webkit-transform:translate3d(10px, 36px, 0px) scale3d(1, 1, 1);}.restart.t-0 #p5pg5QXlX-an-obj-14{-moz-transform:translate(10px, -164px) scale(0.07, 1);transform:translate3d(10px, -164px, 0px) scale3d(0.07, 1, 1);-webkit-transform:translate3d(10px, -164px, 0px) scale3d(0.07, 1, 1);}.restart #p5pg5QXlX-an-obj-14{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-15{-moz-transform:translate(19px, 86px);transform:translate3d(19px, 86px, 0px);-webkit-transform:translate3d(19px, 86px, 0px);width:280px;height:180px;top:0;left:0;font-size:16px;text-align:center;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-15-0{0%{-webkit-transform:translate3d(19px, 86px, 0px) scale3d(0, 0, 1);opacity:0;}100%{-webkit-transform:translate3d(19px, 86px, 0px) scale3d(1, 1, 1);opacity:1;}}@keyframes ani-p5pg5QXlX-an-obj-15-0{0%{transform:translate3d(19px, 86px, 0px) scale3d(0, 0, 1);opacity:0;}100%{transform:translate3d(19px, 86px, 0px) scale3d(1, 1, 1);opacity:1;}}@-moz-keyframes ani-p5pg5QXlX-an-obj-15-0{0%{-moz-transform:translate(19px, 86px) scale(0, 0);opacity:0;}100%{-moz-transform:translate(19px, 86px) scale(1, 1);opacity:1;}}.run.t-0 #p5pg5QXlX-an-obj-15{-moz-animation-name:ani-p5pg5QXlX-an-obj-15-0;animation-name:ani-p5pg5QXlX-an-obj-15-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-15-0;-moz-animation-duration:1.8214s;animation-duration:1.8214s;-webkit-animation-duration:1.8214s;-moz-animation-delay:2.0893s;animation-delay:2.0893s;-webkit-animation-delay:2.0893s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-15{-moz-transform:translate(19px, 86px) scale(1, 1);transform:translate3d(19px, 86px, 0px) scale3d(1, 1, 1);-webkit-transform:translate3d(19px, 86px, 0px) scale3d(1, 1, 1);opacity:1;}.restart.t-0 #p5pg5QXlX-an-obj-15{-moz-transform:translate(19px, 86px) scale(0, 0);transform:translate3d(19px, 86px, 0px) scale3d(0, 0, 1);-webkit-transform:translate3d(19px, 86px, 0px) scale3d(0, 0, 1);opacity:0;}.restart #p5pg5QXlX-an-obj-15{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-16{-moz-transform:translate(100px, 193px);transform:translate3d(100px, 193px, 0px);-webkit-transform:translate3d(100px, 193px, 0px);width:111px;height:119px;top:0;left:0;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-16-0{0%{-webkit-transform:translate3d(100px, 593px, 0px) scale3d(0, 1, 1);}100%{-webkit-transform:translate3d(100px, 193px, 0px) scale3d(1, 1, 1);}}@keyframes ani-p5pg5QXlX-an-obj-16-0{0%{transform:translate3d(100px, 593px, 0px) scale3d(0, 1, 1);}100%{transform:translate3d(100px, 193px, 0px) scale3d(1, 1, 1);}}@-moz-keyframes ani-p5pg5QXlX-an-obj-16-0{0%{-moz-transform:translate(100px, 593px) scale(0, 1);}100%{-moz-transform:translate(100px, 193px) scale(1, 1);}}.run.t-0 #p5pg5QXlX-an-obj-16{-moz-animation-name:ani-p5pg5QXlX-an-obj-16-0;animation-name:ani-p5pg5QXlX-an-obj-16-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-16-0;-moz-animation-duration:1.625s;animation-duration:1.625s;-webkit-animation-duration:1.625s;-moz-animation-delay:3.8721s;animation-delay:3.8721s;-webkit-animation-delay:3.8721s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-16{-moz-transform:translate(100px, 193px) scale(1, 1);transform:translate3d(100px, 193px, 0px) scale3d(1, 1, 1);-webkit-transform:translate3d(100px, 193px, 0px) scale3d(1, 1, 1);}.restart.t-0 #p5pg5QXlX-an-obj-16{-moz-transform:translate(100px, 593px) scale(0, 1);transform:translate3d(100px, 593px, 0px) scale3d(0, 1, 1);-webkit-transform:translate3d(100px, 593px, 0px) scale3d(0, 1, 1);}.restart #p5pg5QXlX-an-obj-16{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-17{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);width:320px;height:416px;top:0;left:0;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-17-0{0%{-webkit-transform:translate3d(0px, 0px, 0px);opacity:0;}23.1921%{-webkit-transform:translate3d(0px, 0px, 0px);opacity:1;}89.1234%{-webkit-transform:translate3d(0px, 0px, 0px);opacity:1;}100%{-webkit-transform:translate3d(0px, 0px, 0px);opacity:0;}}@keyframes ani-p5pg5QXlX-an-obj-17-0{0%{transform:translate3d(0px, 0px, 0px);opacity:0;}23.1921%{transform:translate3d(0px, 0px, 0px);opacity:1;}89.1234%{transform:translate3d(0px, 0px, 0px);opacity:1;}100%{transform:translate3d(0px, 0px, 0px);opacity:0;}}@-moz-keyframes ani-p5pg5QXlX-an-obj-17-0{0%{-moz-transform:translate(0px, 0px);opacity:0;}23.1921%{-moz-transform:translate(0px, 0px);opacity:1;}89.1234%{-moz-transform:translate(0px, 0px);opacity:1;}100%{-moz-transform:translate(0px, 0px);opacity:0;}}.run.t-0 #p5pg5QXlX-an-obj-17{-moz-animation-name:ani-p5pg5QXlX-an-obj-17-0;animation-name:ani-p5pg5QXlX-an-obj-17-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-17-0;-moz-animation-duration:8.6236s;animation-duration:8.6236s;-webkit-animation-duration:8.6236s;-moz-animation-delay:0s;animation-delay:0s;-webkit-animation-delay:0s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-17{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);opacity:0;}.restart.t-0 #p5pg5QXlX-an-obj-17{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);opacity:0;}.restart #p5pg5QXlX-an-obj-17{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-18{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);width:320px;height:416px;top:0;left:0;}.t-0 #p5pg5QXlX-an-obj-18{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);}#p5pg5QXlX-an-obj-19{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);width:320px;height:416px;top:0;left:0;}#p5pg5QXlX-an-obj-20{-moz-transform:translate(-159px, -105px) scale(0.5, 0.4);transform:translate3d(-159px, -105px, 0px) scale3d(0.5, 0.4, 1);-webkit-transform:translate3d(-159px, -105px, 0px) scale3d(0.5, 0.4, 1);width:639px;height:350px;top:0;left:0;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-20-0{0%{-webkit-transform:translate3d(-659px, -105px, 0px) scale3d(0.5, 0.4, 1);}100%{-webkit-transform:translate3d(-159px, -105px, 0px) scale3d(0.5, 0.4, 1);}}@keyframes ani-p5pg5QXlX-an-obj-20-0{0%{transform:translate3d(-659px, -105px, 0px) scale3d(0.5, 0.4, 1);}100%{transform:translate3d(-159px, -105px, 0px) scale3d(0.5, 0.4, 1);}}@-moz-keyframes ani-p5pg5QXlX-an-obj-20-0{0%{-moz-transform:translate(-659px, -105px) scale(0.5, 0.4);}100%{-moz-transform:translate(-159px, -105px) scale(0.5, 0.4);}}.run.t-0 #p5pg5QXlX-an-obj-20{-moz-animation-name:ani-p5pg5QXlX-an-obj-20-0;animation-name:ani-p5pg5QXlX-an-obj-20-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-20-0;-moz-animation-duration:4.6428s;animation-duration:4.6428s;-webkit-animation-duration:4.6428s;-moz-animation-delay:0.3393s;animation-delay:0.3393s;-webkit-animation-delay:0.3393s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-20{-moz-transform:translate(-159px, -105px) scale(0.5, 0.4);transform:translate3d(-159px, -105px, 0px) scale3d(0.5, 0.4, 1);-webkit-transform:translate3d(-159px, -105px, 0px) scale3d(0.5, 0.4, 1);}.restart.t-0 #p5pg5QXlX-an-obj-20{-moz-transform:translate(-659px, -105px) scale(0.5, 0.4);transform:translate3d(-659px, -105px, 0px) scale3d(0.5, 0.4, 1);-webkit-transform:translate3d(-659px, -105px, 0px) scale3d(0.5, 0.4, 1);}.restart #p5pg5QXlX-an-obj-20{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-21{-moz-transform:translate(-160px, 35px) scale(0.5, 0.4);transform:translate3d(-160px, 35px, 0px) scale3d(0.5, 0.4, 1);-webkit-transform:translate3d(-160px, 35px, 0px) scale3d(0.5, 0.4, 1);width:639px;height:350px;top:0;left:0;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-21-0{0%{-webkit-transform:translate3d(340px, 35px, 0px) scale3d(0.5, 0.4, 1);}100%{-webkit-transform:translate3d(-160px, 35px, 0px) scale3d(0.5, 0.4, 1);}}@keyframes ani-p5pg5QXlX-an-obj-21-0{0%{transform:translate3d(340px, 35px, 0px) scale3d(0.5, 0.4, 1);}100%{transform:translate3d(-160px, 35px, 0px) scale3d(0.5, 0.4, 1);}}@-moz-keyframes ani-p5pg5QXlX-an-obj-21-0{0%{-moz-transform:translate(340px, 35px) scale(0.5, 0.4);}100%{-moz-transform:translate(-160px, 35px) scale(0.5, 0.4);}}.run.t-0 #p5pg5QXlX-an-obj-21{-moz-animation-name:ani-p5pg5QXlX-an-obj-21-0;animation-name:ani-p5pg5QXlX-an-obj-21-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-21-0;-moz-animation-duration:4.6428s;animation-duration:4.6428s;-webkit-animation-duration:4.6428s;-moz-animation-delay:0.3393s;animation-delay:0.3393s;-webkit-animation-delay:0.3393s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-21{-moz-transform:translate(-160px, 35px) scale(0.5, 0.4);transform:translate3d(-160px, 35px, 0px) scale3d(0.5, 0.4, 1);-webkit-transform:translate3d(-160px, 35px, 0px) scale3d(0.5, 0.4, 1);}.restart.t-0 #p5pg5QXlX-an-obj-21{-moz-transform:translate(340px, 35px) scale(0.5, 0.4);transform:translate3d(340px, 35px, 0px) scale3d(0.5, 0.4, 1);-webkit-transform:translate3d(340px, 35px, 0px) scale3d(0.5, 0.4, 1);}.restart #p5pg5QXlX-an-obj-21{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-22{-moz-transform:translate(-158px, 171px) scale(0.5, 0.4);transform:translate3d(-158px, 171px, 0px) scale3d(0.5, 0.4, 1);-webkit-transform:translate3d(-158px, 171px, 0px) scale3d(0.5, 0.4, 1);width:639px;height:350px;top:0;left:0;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-22-0{0%{-webkit-transform:translate3d(-658px, 171px, 0px) scale3d(0.5, 0.4, 1);}100%{-webkit-transform:translate3d(-158px, 171px, 0px) scale3d(0.5, 0.4, 1);}}@keyframes ani-p5pg5QXlX-an-obj-22-0{0%{transform:translate3d(-658px, 171px, 0px) scale3d(0.5, 0.4, 1);}100%{transform:translate3d(-158px, 171px, 0px) scale3d(0.5, 0.4, 1);}}@-moz-keyframes ani-p5pg5QXlX-an-obj-22-0{0%{-moz-transform:translate(-658px, 171px) scale(0.5, 0.4);}100%{-moz-transform:translate(-158px, 171px) scale(0.5, 0.4);}}.run.t-0 #p5pg5QXlX-an-obj-22{-moz-animation-name:ani-p5pg5QXlX-an-obj-22-0;animation-name:ani-p5pg5QXlX-an-obj-22-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-22-0;-moz-animation-duration:4.6428s;animation-duration:4.6428s;-webkit-animation-duration:4.6428s;-moz-animation-delay:0.3393s;animation-delay:0.3393s;-webkit-animation-delay:0.3393s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-22{-moz-transform:translate(-158px, 171px) scale(0.5, 0.4);transform:translate3d(-158px, 171px, 0px) scale3d(0.5, 0.4, 1);-webkit-transform:translate3d(-158px, 171px, 0px) scale3d(0.5, 0.4, 1);}.restart.t-0 #p5pg5QXlX-an-obj-22{-moz-transform:translate(-658px, 171px) scale(0.5, 0.4);transform:translate3d(-658px, 171px, 0px) scale3d(0.5, 0.4, 1);-webkit-transform:translate3d(-658px, 171px, 0px) scale3d(0.5, 0.4, 1);}.restart #p5pg5QXlX-an-obj-22{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-23{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);width:320px;height:416px;top:0;left:0;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-23-0{0%{-webkit-transform:translate3d(0px, 0px, 0px);opacity:0;}22.4629%{-webkit-transform:translate3d(0px, 0px, 0px);opacity:1;}88.6632%{-webkit-transform:translate3d(0px, 0px, 0px);opacity:1;}100%{-webkit-transform:translate3d(0px, 0px, 0px);opacity:0;}}@keyframes ani-p5pg5QXlX-an-obj-23-0{0%{transform:translate3d(0px, 0px, 0px);opacity:0;}22.4629%{transform:translate3d(0px, 0px, 0px);opacity:1;}88.6632%{transform:translate3d(0px, 0px, 0px);opacity:1;}100%{transform:translate3d(0px, 0px, 0px);opacity:0;}}@-moz-keyframes ani-p5pg5QXlX-an-obj-23-0{0%{-moz-transform:translate(0px, 0px);opacity:0;}22.4629%{-moz-transform:translate(0px, 0px);opacity:1;}88.6632%{-moz-transform:translate(0px, 0px);opacity:1;}100%{-moz-transform:translate(0px, 0px);opacity:0;}}.run.t-0 #p5pg5QXlX-an-obj-23{-moz-animation-name:ani-p5pg5QXlX-an-obj-23-0;animation-name:ani-p5pg5QXlX-an-obj-23-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-23-0;-moz-animation-duration:8.9036s;animation-duration:8.9036s;-webkit-animation-duration:8.9036s;-moz-animation-delay:0s;animation-delay:0s;-webkit-animation-delay:0s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-23{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);opacity:0;}.restart.t-0 #p5pg5QXlX-an-obj-23{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);opacity:0;}.restart #p5pg5QXlX-an-obj-23{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-24{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);width:320px;height:416px;top:0;left:0;}.t-0 #p5pg5QXlX-an-obj-24{-moz-transform:translate(0px, 0px);transform:translate3d(0px, 0px, 0px);-webkit-transform:translate3d(0px, 0px, 0px);}#p5pg5QXlX-an-obj-25{-moz-transform:translate(0px, 376px);transform:translate3d(0px, 376px, 0px);-webkit-transform:translate3d(0px, 376px, 0px);width:320px;height:40px;top:0;left:0;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-25-0{0%{-webkit-transform:translate3d(0px, 376px, 0px);opacity:0;}100%{-webkit-transform:translate3d(0px, 376px, 0px);opacity:1;}}@keyframes ani-p5pg5QXlX-an-obj-25-0{0%{transform:translate3d(0px, 376px, 0px);opacity:0;}100%{transform:translate3d(0px, 376px, 0px);opacity:1;}}@-moz-keyframes ani-p5pg5QXlX-an-obj-25-0{0%{-moz-transform:translate(0px, 376px);opacity:0;}100%{-moz-transform:translate(0px, 376px);opacity:1;}}.run.t-0 #p5pg5QXlX-an-obj-25{-moz-animation-name:ani-p5pg5QXlX-an-obj-25-0;animation-name:ani-p5pg5QXlX-an-obj-25-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-25-0;-moz-animation-duration:0.1111s;animation-duration:0.1111s;-webkit-animation-duration:0.1111s;-moz-animation-delay:4.5714s;animation-delay:4.5714s;-webkit-animation-delay:4.5714s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-25{-moz-transform:translate(0px, 376px);transform:translate3d(0px, 376px, 0px);-webkit-transform:translate3d(0px, 376px, 0px);opacity:1;}.restart.t-0 #p5pg5QXlX-an-obj-25{-moz-transform:translate(0px, 376px);transform:translate3d(0px, 376px, 0px);-webkit-transform:translate3d(0px, 376px, 0px);opacity:0;}.restart #p5pg5QXlX-an-obj-25{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-26{-moz-transform:translate(0px, 375px);transform:translate3d(0px, 375px, 0px);-webkit-transform:translate3d(0px, 375px, 0px);width:54px;height:40px;top:0;left:0;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-26-0{0%{-webkit-transform:translate3d(0px, 375px, 0px) scale3d(1, 1, 1);opacity:0;}13.4615%{-webkit-transform:translate3d(0px, 375px, 0px) scale3d(1, 1, 1);opacity:1;}55.7692%{-webkit-transform:translate3d(0px, 375px, 0px) scale3d(1.2, 1.2, 1);opacity:1;}100%{-webkit-transform:translate3d(0px, 375px, 0px) scale3d(1, 1, 1);opacity:1;}}@keyframes ani-p5pg5QXlX-an-obj-26-0{0%{transform:translate3d(0px, 375px, 0px) scale3d(1, 1, 1);opacity:0;}13.4615%{transform:translate3d(0px, 375px, 0px) scale3d(1, 1, 1);opacity:1;}55.7692%{transform:translate3d(0px, 375px, 0px) scale3d(1.2, 1.2, 1);opacity:1;}100%{transform:translate3d(0px, 375px, 0px) scale3d(1, 1, 1);opacity:1;}}@-moz-keyframes ani-p5pg5QXlX-an-obj-26-0{0%{-moz-transform:translate(0px, 375px) scale(1, 1);opacity:0;}13.4615%{-moz-transform:translate(0px, 375px) scale(1, 1);opacity:1;}55.7692%{-moz-transform:translate(0px, 375px) scale(1.2, 1.2);opacity:1;}100%{-moz-transform:translate(0px, 375px) scale(1, 1);opacity:1;}}.run.t-0 #p5pg5QXlX-an-obj-26{-moz-animation-name:ani-p5pg5QXlX-an-obj-26-0;animation-name:ani-p5pg5QXlX-an-obj-26-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-26-0;-moz-animation-duration:0.8254s;animation-duration:0.8254s;-webkit-animation-duration:0.8254s;-moz-animation-delay:4.5714s;animation-delay:4.5714s;-webkit-animation-delay:4.5714s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-26{-moz-transform:translate(0px, 375px) scale(1, 1);transform:translate3d(0px, 375px, 0px) scale3d(1, 1, 1);-webkit-transform:translate3d(0px, 375px, 0px) scale3d(1, 1, 1);opacity:1;}.restart.t-0 #p5pg5QXlX-an-obj-26{-moz-transform:translate(0px, 375px) scale(1, 1);transform:translate3d(0px, 375px, 0px) scale3d(1, 1, 1);-webkit-transform:translate3d(0px, 375px, 0px) scale3d(1, 1, 1);opacity:0;}.restart #p5pg5QXlX-an-obj-26{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-27{-moz-transform:translate(44px, 376px);transform:translate3d(44px, 376px, 0px);-webkit-transform:translate3d(44px, 376px, 0px);width:54px;height:40px;top:0;left:0;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-27-0{0%{-webkit-transform:translate3d(44px, 376px, 0px) scale3d(1, 1, 1);opacity:0;}33.8235%{-webkit-transform:translate3d(44px, 376px, 0px) scale3d(1, 1, 1);opacity:1;}66.1765%{-webkit-transform:translate3d(44px, 376px, 0px) scale3d(1.2, 1.2, 1);opacity:1;}100%{-webkit-transform:translate3d(44px, 376px, 0px) scale3d(1, 1, 1);opacity:1;}}@keyframes ani-p5pg5QXlX-an-obj-27-0{0%{transform:translate3d(44px, 376px, 0px) scale3d(1, 1, 1);opacity:0;}33.8235%{transform:translate3d(44px, 376px, 0px) scale3d(1, 1, 1);opacity:1;}66.1765%{transform:translate3d(44px, 376px, 0px) scale3d(1.2, 1.2, 1);opacity:1;}100%{transform:translate3d(44px, 376px, 0px) scale3d(1, 1, 1);opacity:1;}}@-moz-keyframes ani-p5pg5QXlX-an-obj-27-0{0%{-moz-transform:translate(44px, 376px) scale(1, 1);opacity:0;}33.8235%{-moz-transform:translate(44px, 376px) scale(1, 1);opacity:1;}66.1765%{-moz-transform:translate(44px, 376px) scale(1.2, 1.2);opacity:1;}100%{-moz-transform:translate(44px, 376px) scale(1, 1);opacity:1;}}.run.t-0 #p5pg5QXlX-an-obj-27{-moz-animation-name:ani-p5pg5QXlX-an-obj-27-0;animation-name:ani-p5pg5QXlX-an-obj-27-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-27-0;-moz-animation-duration:1.0794s;animation-duration:1.0794s;-webkit-animation-duration:1.0794s;-moz-animation-delay:4.5714s;animation-delay:4.5714s;-webkit-animation-delay:4.5714s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-27{-moz-transform:translate(44px, 376px) scale(1, 1);transform:translate3d(44px, 376px, 0px) scale3d(1, 1, 1);-webkit-transform:translate3d(44px, 376px, 0px) scale3d(1, 1, 1);opacity:1;}.restart.t-0 #p5pg5QXlX-an-obj-27{-moz-transform:translate(44px, 376px) scale(1, 1);transform:translate3d(44px, 376px, 0px) scale3d(1, 1, 1);-webkit-transform:translate3d(44px, 376px, 0px) scale3d(1, 1, 1);opacity:0;}.restart #p5pg5QXlX-an-obj-27{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-28{-moz-transform:translate(99px, 376px);transform:translate3d(99px, 376px, 0px);-webkit-transform:translate3d(99px, 376px, 0px);width:54px;height:40px;top:0;left:0;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-28-0{0%{-webkit-transform:translate3d(99px, 376px, 0px) scale3d(1, 1, 1);opacity:0;}47.0588%{-webkit-transform:translate3d(99px, 376px, 0px) scale3d(1, 1, 1);opacity:1;}72.9412%{-webkit-transform:translate3d(99px, 376px, 0px) scale3d(1.2, 1.2, 1);opacity:1;}100%{-webkit-transform:translate3d(99px, 376px, 0px) scale3d(1, 1, 1);opacity:1;}}@keyframes ani-p5pg5QXlX-an-obj-28-0{0%{transform:translate3d(99px, 376px, 0px) scale3d(1, 1, 1);opacity:0;}47.0588%{transform:translate3d(99px, 376px, 0px) scale3d(1, 1, 1);opacity:1;}72.9412%{transform:translate3d(99px, 376px, 0px) scale3d(1.2, 1.2, 1);opacity:1;}100%{transform:translate3d(99px, 376px, 0px) scale3d(1, 1, 1);opacity:1;}}@-moz-keyframes ani-p5pg5QXlX-an-obj-28-0{0%{-moz-transform:translate(99px, 376px) scale(1, 1);opacity:0;}47.0588%{-moz-transform:translate(99px, 376px) scale(1, 1);opacity:1;}72.9412%{-moz-transform:translate(99px, 376px) scale(1.2, 1.2);opacity:1;}100%{-moz-transform:translate(99px, 376px) scale(1, 1);opacity:1;}}.run.t-0 #p5pg5QXlX-an-obj-28{-moz-animation-name:ani-p5pg5QXlX-an-obj-28-0;animation-name:ani-p5pg5QXlX-an-obj-28-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-28-0;-moz-animation-duration:1.3492s;animation-duration:1.3492s;-webkit-animation-duration:1.3492s;-moz-animation-delay:4.5714s;animation-delay:4.5714s;-webkit-animation-delay:4.5714s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-28{-moz-transform:translate(99px, 376px) scale(1, 1);transform:translate3d(99px, 376px, 0px) scale3d(1, 1, 1);-webkit-transform:translate3d(99px, 376px, 0px) scale3d(1, 1, 1);opacity:1;}.restart.t-0 #p5pg5QXlX-an-obj-28{-moz-transform:translate(99px, 376px) scale(1, 1);transform:translate3d(99px, 376px, 0px) scale3d(1, 1, 1);-webkit-transform:translate3d(99px, 376px, 0px) scale3d(1, 1, 1);opacity:0;}.restart #p5pg5QXlX-an-obj-28{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-29{-moz-transform:translate(151px, 376px) scale(1.2, 1.2);transform:translate3d(151px, 376px, 0px) scale3d(1.2, 1.2, 1);-webkit-transform:translate3d(151px, 376px, 0px) scale3d(1.2, 1.2, 1);width:54px;height:40px;top:0;left:0;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-29-0{0%{-webkit-transform:translate3d(151px, 376px, 0px) scale3d(1.2, 1.2, 1);opacity:0;}55%{-webkit-transform:translate3d(151px, 376px, 0px) scale3d(1.2, 1.2, 1);opacity:1;}77%{-webkit-transform:translate3d(151px, 376px, 0px) scale3d(1.44, 1.44, 1);opacity:1;}100%{-webkit-transform:translate3d(151px, 376px, 0px) scale3d(1.2, 1.2, 1);opacity:1;}}@keyframes ani-p5pg5QXlX-an-obj-29-0{0%{transform:translate3d(151px, 376px, 0px) scale3d(1.2, 1.2, 1);opacity:0;}55%{transform:translate3d(151px, 376px, 0px) scale3d(1.2, 1.2, 1);opacity:1;}77%{transform:translate3d(151px, 376px, 0px) scale3d(1.44, 1.44, 1);opacity:1;}100%{transform:translate3d(151px, 376px, 0px) scale3d(1.2, 1.2, 1);opacity:1;}}@-moz-keyframes ani-p5pg5QXlX-an-obj-29-0{0%{-moz-transform:translate(151px, 376px) scale(1.2, 1.2);opacity:0;}55%{-moz-transform:translate(151px, 376px) scale(1.2, 1.2);opacity:1;}77%{-moz-transform:translate(151px, 376px) scale(1.44, 1.44);opacity:1;}100%{-moz-transform:translate(151px, 376px) scale(1.2, 1.2);opacity:1;}}.run.t-0 #p5pg5QXlX-an-obj-29{-moz-animation-name:ani-p5pg5QXlX-an-obj-29-0;animation-name:ani-p5pg5QXlX-an-obj-29-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-29-0;-moz-animation-duration:1.5873s;animation-duration:1.5873s;-webkit-animation-duration:1.5873s;-moz-animation-delay:4.5714s;animation-delay:4.5714s;-webkit-animation-delay:4.5714s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-29{-moz-transform:translate(151px, 376px) scale(1.2, 1.2);transform:translate3d(151px, 376px, 0px) scale3d(1.2, 1.2, 1);-webkit-transform:translate3d(151px, 376px, 0px) scale3d(1.2, 1.2, 1);opacity:1;}.restart.t-0 #p5pg5QXlX-an-obj-29{-moz-transform:translate(151px, 376px) scale(1.2, 1.2);transform:translate3d(151px, 376px, 0px) scale3d(1.2, 1.2, 1);-webkit-transform:translate3d(151px, 376px, 0px) scale3d(1.2, 1.2, 1);opacity:0;}.restart #p5pg5QXlX-an-obj-29{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-30{-moz-transform:translate(213px, 376px);transform:translate3d(213px, 376px, 0px);-webkit-transform:translate3d(213px, 376px, 0px);width:43px;height:39px;top:0;left:0;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-30-0{0%{-webkit-transform:translate3d(213px, 376px, 0px) scale3d(1, 1, 1);opacity:0;}60.8696%{-webkit-transform:translate3d(213px, 376px, 0px) scale3d(1, 1, 1);opacity:1;}80%{-webkit-transform:translate3d(213px, 376px, 0px) scale3d(1.2, 1.2, 1);opacity:1;}100%{-webkit-transform:translate3d(213px, 376px, 0px) scale3d(1, 1, 1);opacity:1;}}@keyframes ani-p5pg5QXlX-an-obj-30-0{0%{transform:translate3d(213px, 376px, 0px) scale3d(1, 1, 1);opacity:0;}60.8696%{transform:translate3d(213px, 376px, 0px) scale3d(1, 1, 1);opacity:1;}80%{transform:translate3d(213px, 376px, 0px) scale3d(1.2, 1.2, 1);opacity:1;}100%{transform:translate3d(213px, 376px, 0px) scale3d(1, 1, 1);opacity:1;}}@-moz-keyframes ani-p5pg5QXlX-an-obj-30-0{0%{-moz-transform:translate(213px, 376px) scale(1, 1);opacity:0;}60.8696%{-moz-transform:translate(213px, 376px) scale(1, 1);opacity:1;}80%{-moz-transform:translate(213px, 376px) scale(1.2, 1.2);opacity:1;}100%{-moz-transform:translate(213px, 376px) scale(1, 1);opacity:1;}}.run.t-0 #p5pg5QXlX-an-obj-30{-moz-animation-name:ani-p5pg5QXlX-an-obj-30-0;animation-name:ani-p5pg5QXlX-an-obj-30-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-30-0;-moz-animation-duration:1.8254s;animation-duration:1.8254s;-webkit-animation-duration:1.8254s;-moz-animation-delay:4.5714s;animation-delay:4.5714s;-webkit-animation-delay:4.5714s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-30{-moz-transform:translate(213px, 376px) scale(1, 1);transform:translate3d(213px, 376px, 0px) scale3d(1, 1, 1);-webkit-transform:translate3d(213px, 376px, 0px) scale3d(1, 1, 1);opacity:1;}.restart.t-0 #p5pg5QXlX-an-obj-30{-moz-transform:translate(213px, 376px) scale(1, 1);transform:translate3d(213px, 376px, 0px) scale3d(1, 1, 1);-webkit-transform:translate3d(213px, 376px, 0px) scale3d(1, 1, 1);opacity:0;}.restart #p5pg5QXlX-an-obj-30{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}#p5pg5QXlX-an-obj-31{-moz-transform:translate(266px, 375px) scale(0.8, 0.8);transform:translate3d(266px, 375px, 0px) scale3d(0.8, 0.8, 1);-webkit-transform:translate3d(266px, 375px, 0px) scale3d(0.8, 0.8, 1);width:50px;height:40px;top:0;left:0;}@-webkit-keyframes ani-p5pg5QXlX-an-obj-31-0{0%{-webkit-transform:translate3d(266px, 375px, 0px) scale3d(0.8, 0.8, 1);opacity:0;}65.1163%{-webkit-transform:translate3d(266px, 375px, 0px) scale3d(0.8, 0.8, 1);opacity:1;}82.1705%{-webkit-transform:translate3d(266px, 375px, 0px) scale3d(0.96, 0.96, 1);opacity:1;}100%{-webkit-transform:translate3d(266px, 375px, 0px) scale3d(0.8, 0.8, 1);opacity:1;}}@keyframes ani-p5pg5QXlX-an-obj-31-0{0%{transform:translate3d(266px, 375px, 0px) scale3d(0.8, 0.8, 1);opacity:0;}65.1163%{transform:translate3d(266px, 375px, 0px) scale3d(0.8, 0.8, 1);opacity:1;}82.1705%{transform:translate3d(266px, 375px, 0px) scale3d(0.96, 0.96, 1);opacity:1;}100%{transform:translate3d(266px, 375px, 0px) scale3d(0.8, 0.8, 1);opacity:1;}}@-moz-keyframes ani-p5pg5QXlX-an-obj-31-0{0%{-moz-transform:translate(266px, 375px) scale(0.8, 0.8);opacity:0;}65.1163%{-moz-transform:translate(266px, 375px) scale(0.8, 0.8);opacity:1;}82.1705%{-moz-transform:translate(266px, 375px) scale(0.96, 0.96);opacity:1;}100%{-moz-transform:translate(266px, 375px) scale(0.8, 0.8);opacity:1;}}.run.t-0 #p5pg5QXlX-an-obj-31{-moz-animation-name:ani-p5pg5QXlX-an-obj-31-0;animation-name:ani-p5pg5QXlX-an-obj-31-0;-webkit-animation-name:ani-p5pg5QXlX-an-obj-31-0;-moz-animation-duration:2.0476s;animation-duration:2.0476s;-webkit-animation-duration:2.0476s;-moz-animation-delay:4.5714s;animation-delay:4.5714s;-webkit-animation-delay:4.5714s;-moz-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-fill-mode:both;}.t-0 #p5pg5QXlX-an-obj-31{-moz-transform:translate(266px, 375px) scale(0.8, 0.8);transform:translate3d(266px, 375px, 0px) scale3d(0.8, 0.8, 1);-webkit-transform:translate3d(266px, 375px, 0px) scale3d(0.8, 0.8, 1);opacity:1;}.restart.t-0 #p5pg5QXlX-an-obj-31{-moz-transform:translate(266px, 375px) scale(0.8, 0.8);transform:translate3d(266px, 375px, 0px) scale3d(0.8, 0.8, 1);-webkit-transform:translate3d(266px, 375px, 0px) scale3d(0.8, 0.8, 1);opacity:0;}.restart #p5pg5QXlX-an-obj-31{-moz-animation-name:none !important;animation-name:none !important;-webkit-animation-name:none !important;}
+.info a{
+color:#fff !important;
+font-size:14px;
+text-decoration:none;
+}
+.toggl{
+cursor:pointer;
+}
+.info{
+position:absolute;
+bottom:37px;
+width:46%;
+padding:10px 7px;
+background-color:#9E9E9E;
+display:none;
+opacity:1;
+color:#fff !important;
+font-size:14px;
+text-decoration:none;
+height:auto;
+margin:0;
+}
+.info ul
+{
+list-style:none;
+position:relative;
+float:left;
+margin:0;
+padding:0
+}
+
+.info ul li{
+    line-height:32px;
+}
+#p5pg5QXlX-an-anim {
+margin: auto;
+position: absolute;
+top: 0; bottom: 0; left: 0; right: 0;
+}
+</style>
+
+
+
+<script type="text/javascript" src="assets/buzz.js"></script>
+</head>
+<body style="margin:0; height: 100%;">
+<div id="p5pg5QXlX-an-anim"><ol>
+
+<li id="p5pg5QXlX-an-scene-0" >
+<div class="p5pg5QXlX-an-stage">
+<div id="p5pg5QXlX-an-obj-1"><div><img  height="416" width="320"  ></div></div>
+<div id="p5pg5QXlX-an-obj-2"><div><img  height="416" width="320"  ></div></div>
+<div id="p5pg5QXlX-an-obj-3"><div><img  height="75" width="320"  ></div></div>
+<div id="p5pg5QXlX-an-obj-4"><div><img  height="416" width="320"  ></div></div>
+<div id="p5pg5QXlX-an-obj-5"><div><img  height="416" width="320"  ></div></div>
+<div id="p5pg5QXlX-an-obj-6"><div><img  height="416" width="320"  ></div></div>
+<div id="p5pg5QXlX-an-obj-7"><div><img  height="416" width="320"  ></div></div>
+<div id="p5pg5QXlX-an-obj-8"><div><img  height="416" width="320"  ></div></div>
+<div id="p5pg5QXlX-an-obj-9"><div><img  height="416" width="320"  ></div></div>
+<div id="p5pg5QXlX-an-obj-10"></div>
+<div id="p5pg5QXlX-an-obj-11"></div>
+<div id="p5pg5QXlX-an-obj-12"><div><img  height="89" width="89" ></div></div>
+</div>
+</li>
+
+<li id="p5pg5QXlX-an-scene-7" >
+<div class="p5pg5QXlX-an-stage">
+<div id="p5pg5QXlX-an-obj-13"><div><img  height="416" width="320"  ></div></div>
+<div id="p5pg5QXlX-an-obj-14"><span>Receiver Name</span></div>
+<div id="p5pg5QXlX-an-obj-15"><span>Wishing you a wonderful Birthday and a prosperous year ahead!</span></div>
+<div id="p5pg5QXlX-an-obj-16"><div><img  height="119" width="111"  ></div></div>
+<div id="p5pg5QXlX-an-obj-17"><div><img  height="416" width="320"  ></div></div>
+<div id="p5pg5QXlX-an-obj-18"><div><img  height="416" width="320"  ></div></div>
+</div>
+</li>
+
+<li id="p5pg5QXlX-an-scene-4" >
+<div class="p5pg5QXlX-an-stage">
+<div id="p5pg5QXlX-an-obj-19"><div><img  height="416" width="320"  ></div></div>
+<div id="p5pg5QXlX-an-obj-20"><div><img  height="350" width="639"  ></div></div>
+<div id="p5pg5QXlX-an-obj-21"><div><img  height="350" width="639"  ></div></div>
+<div id="p5pg5QXlX-an-obj-22"><div><img  height="350" width="639"  ></div></div>
+<div id="p5pg5QXlX-an-obj-23"><div><img  height="416" width="320"  ></div></div>
+<div id="p5pg5QXlX-an-obj-24"><div><img  height="416" width="320"  ></div></div>
+<div id="p5pg5QXlX-an-obj-25"><div><img  height="40" width="320"  ></div></div>
+<div id="p5pg5QXlX-an-obj-26"><div><img  height="40" width="54"  ></div></div>
+<div id="p5pg5QXlX-an-obj-27"><div><img  height="40" width="54"  ></div></div>
+<div id="p5pg5QXlX-an-obj-28"><div><img  height="40" width="54"  ></div></div>
+<div id="p5pg5QXlX-an-obj-29"><div><img  height="40" width="54"  ></div></div>
+<div id="p5pg5QXlX-an-obj-30"><div><img  height="39" width="43"  ></div></div>
+<div id="p5pg5QXlX-an-obj-31"><div><img  height="40" width="50"  ></div></div>
+</div>
+</li>
+
+</ol></div>
+
+<script>
+$("#p5pg5QXlX-an-obj-1 img").attr("src","custom/overlay1.png");
+$("#p5pg5QXlX-an-obj-2 img").attr("src",RESOURCE_PATH+"stars-and-chand.png");
+$("#p5pg5QXlX-an-obj-3 img").attr("src",RESOURCE_PATH+"stars-support.png");
+$("#p5pg5QXlX-an-obj-4 img").attr("src",RESOURCE_PATH+"page1-bottom-design.png");
+$("#p5pg5QXlX-an-obj-5 img").attr("src",RESOURCE_PATH+"page1-minars.png");
+$("#p5pg5QXlX-an-obj-6 img").attr("src",RESOURCE_PATH+"ramadan.png");
+$("#p5pg5QXlX-an-obj-7 img").attr("src",RESOURCE_PATH+"mubarak.png");
+$("#p5pg5QXlX-an-obj-8 img").attr("src","custom/page1hw.png");
+$("#p5pg5QXlX-an-obj-9 img").attr("src","custom/panel.png");
+$("#p5pg5QXlX-an-obj-12 img").attr("src",RESOURCE_PATH+"rplay.png");
+$("#p5pg5QXlX-an-obj-13 img").attr("src","custom/overlay2.png");
+$("#p5pg5QXlX-an-obj-16 img").attr("src",RESOURCE_PATH+"page2-logo.png");
+$("#p5pg5QXlX-an-obj-17 img").attr("src","custom/page2hw.png");
+$("#p5pg5QXlX-an-obj-18 img").attr("src","custom/panel.png");
+$("#p5pg5QXlX-an-obj-19 img").attr("src","custom/overlay3.png");
+$("#p5pg5QXlX-an-obj-20 img").attr("src",RESOURCE_PATH+"3-3.jpg");
+$("#p5pg5QXlX-an-obj-21 img").attr("src",RESOURCE_PATH+"3-1.jpg");
+$("#p5pg5QXlX-an-obj-22 img").attr("src",RESOURCE_PATH+"3-2.jpg");
+$("#p5pg5QXlX-an-obj-23 img").attr("src","custom/page2hw.png");
+$("#p5pg5QXlX-an-obj-24 img").attr("src","custom/panel.png");
+$("#p5pg5QXlX-an-obj-25 img").attr("src",RESOURCE_PATH+"strip.png");
+$("#p5pg5QXlX-an-obj-26 img").attr("src",RESOURCE_PATH+"map.png");
+$("#p5pg5QXlX-an-obj-27 img").attr("src",RESOURCE_PATH+"phone.png");
+$("#p5pg5QXlX-an-obj-28 img").attr("src",RESOURCE_PATH+"url.png");
+$("#p5pg5QXlX-an-obj-29 img").attr("src",RESOURCE_PATH+"email.png");
+$("#p5pg5QXlX-an-obj-30 img").attr("src",RESOURCE_PATH+"giftcard.png");
+$("#p5pg5QXlX-an-obj-31 img").attr("src",RESOURCE_PATH+"social.png");
+setCardDetails();
+</script>
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', trackerId, 'auto');
+  ga('send', 'pageview');
+
+</script></body>
+</html>
