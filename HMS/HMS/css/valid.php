@@ -1,0 +1,54 @@
+<style type='text/css'>
+.error_strings
+{
+    font-family:Verdana;
+    font-size:10px;
+    color:#660000;
+}
+.sfm_float_error_box
+{
+    position:absolute;
+    z-index:999;
+    cursor:default;
+    font-family:Verdana;
+    font-size:10px;
+    color:#660000;
+    background-color:#ffff66;
+    border-style:solid;
+    border-width:1px;
+    border-color:#660000;
+}
+.sfm_float_box_td
+{
+    padding:3px;
+    cursor:default;
+    font-family:Verdana;
+    font-size:10px;
+    color:#660000;
+    background-color:#ffff66;
+}
+.sfm_close_box
+{
+    font-family:Verdana;
+    font-size:10px;
+    font-weight:bold;
+    color:#ffffff;
+    background-color:#660000;
+    border-width:0px;
+    text-align:center;
+}
+.sfm_cr_box
+{
+    font-family:Verdana;
+    font-size:10px;
+    color:#888888;
+    border-style:solid;
+    border-width:0px;
+    border-color:#660000;
+}
+.sfm_cr_box a
+{
+    color:#888888;
+}
+</style>
+

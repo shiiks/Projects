@@ -1,0 +1,176 @@
+<h3>DC Decision</h3>
+                        <div class="leftpanel">
+							<h3>Fine</h3>
+							<form method="POST" enctype="multipart/form-data">
+									Upload File:
+                                    <input type="file" name="fileToUpload" id="fileToUpload"/>
+									Amount: <input type="text" name="amount" placeholder="Enter the amount"/><br><br>
+									<input type="submit" name="Ssubmit" value="Submit"/> 
+							</form>
+                        </div>
+						<?php
+							if(isset($_POST['Ssubmit']))
+							{
+								$target_dir = "uploads/";
+								$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+								$uploadOk = 1;
+								$imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
+								// Check if image file is a actual image or fake image
+
+								// Check if file already exists
+								if (file_exists($target_file)) {
+									echo "Sorry, file already exists.";
+									$uploadOk = 0;
+								}
+								// Check file size
+								if ($_FILES["fileToUpload"]["size"] > 500000) {
+									echo "Sorry, your file is too large.";
+									$uploadOk = 0;
+								}
+								// Allow certain file formats
+								if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+								&& $imageFileType != "pdf" && $imageFileType != "doc") {
+									echo "Sorry, only JPG, JPEG, PNG, DOC & PDF files are allowed.";
+									$uploadOk = 0;
+								}
+								// Check if $uploadOk is set to 0 by an error
+								if ($uploadOk == 0) {
+									echo "Sorry, your file was not uploaded.";
+								// if everything is ok, try to upload file
+								} else {
+									if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+										echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
+									} else {
+										echo "Sorry, there was an error uploading your file.";
+									}
+								}
+								if(!empty($_POST['amount']))
+								{
+									$amount=$_POST['amount'];
+									$quer="SELECT student_id FROM student WHERE roll='".$_SESSION['roll']."' AND validity_date>NOW()";
+									$quer_run=mysql_query($quer,$db);
+									if(mysql_num_rows($quer_run)==FALSE)
+									{
+										echo "No Fine";
+									}
+									else
+									{
+										$student_id=mysql_fetch_array($quer_run);
+									}
+									$mesg="Your request has been submitted.";
+									$queryy="INSERT INTO fine_imposed(student_id,roll,emp_id,Fine_amount,indisiplinary_ticket) VALUES ('".$student_id['student_id']."','".$_SESSION['roll']."','".$_SESSION['s_admin_username']."','".$amount."','".$_SESSION['Ticket_no']."')";
+									$query8="UPDATE indisciplinary_dc_reports SET Closure_status=1 WHERE Ticket_no='".$_SESSION['Ticket_no']."'";
+									$queryy_run=mysql_query($queryy,$db);
+									$query8_run=mysql_query($query8,$db);
+									?>
+									<script>
+								    var r=confirm('<?php echo $mesg; ?>');
+									if (r == true) {
+										window.location="index.php";
+									}
+									else
+									{
+										window.location="index.php";
+									}
+									</script>
+									<?php
+								}
+							}
+						
+						
+						?>
+						<div class="rightpanel">
+							<h3>DC</h3>
+							<form method="POST"/>
+								Enter The Date Of DC : <input type="text" name="date" />(eg:YYYY-MM-DD)
+								<input type="submit" name="Submit" value="Submit"/>
+							</form>
+						</div>
+						<?php
+						   if($_POST['Submit'])
+						   {
+							   if(!empty($_POST['date']))
+							   {
+									$query9="UPDATE indisciplinary_dc_reports SET DC_Date='".$_POST['date']."' WHERE Ticket_no='".$_SESSION['Ticket_no']."'";
+									$query9_run=mysql_query($query9,$db);
+									?>
+									<script>
+								    var r=confirm('<?php echo $mesg; ?>');
+									if (r == true) {
+										window.location="index.php";
+									}
+									else
+									{
+										window.location="index.php";
+									}
+									</script>
+									<?php
+						       }
+						   }
+						?>
+						<div class="rightpanel">
+							<h3>DC Deallotment</h3>
+							<?php
+								$query="SELECT sl_no,hostel_id,room,student_id FROM room_allocation1 WHERE Roll='".$_SESSION['roll']."' AND end_date>NOW()";
+								$query0="UPDATE indisciplinary_dc_reports SET Closure_status=1 WHERE Ticket_no='".$_SESSION['Ticket_no']."'";
+								$query_run=mysql_query($query,$db);
+								$query0_run=mysql_query($query0,$db);
+								if(mysql_num_rows($query_run)==FALSE)
+								{
+									echo "error";
+								}
+								else
+								{
+									$result=mysql_fetch_assoc($query_run);
+			                        ?>
+									<form method="POST" action="dc_decision1.php">
+									Debarred:<input id="debar" type="radio" name="dealloc" value="debarred"/><br>
+								    &nbsp Suspend:<input id="debar" type="radio" name="dealloc" value="suspension"/>
+									<input type="submit" name="submit" value="Submit" />
+						            </form>
+											<?php
+												if($_POST['submit'])
+												{
+													if(!empty($_POST['dealloc']))
+													{
+														$mesq="Request has Been Submited.";
+														if($_POST['dealloc']=="debarred")
+														{
+															$query2="INSERT INTO room_deallocation(sl_no,hostel_id,student_id,room,roll,Delloc_date,Dealloc_type,status,Approval_emp,indisiplinary_ticket) VALUES ('".$result['sl_no']."','".$result['hostel_id']."','".$result['student_id']."','".$result['room']."','".$_SESSION['roll']."',NOW(),1,1,'".$_SESSION['s_admin_username']."','".$_SESSION['Ticket_no']."')";
+											                $query3="UPDATE room_allocation1 SET reason=1,end_date=NOW() WHERE sl_no='".$result['sl_no']."'";
+															$query_run2=mysql_query($query2,$db);
+															$query_run3=mysql_query($query3,$db);
+															
+											            }
+														else if($_POST['dealloc']=="suspension")
+														{
+															$query4="INSERT INTO room_deallocation(sl_no,hostel_id,student_id,room,roll,Delloc_date,Dealloc_type,status,Approval_emp,indisiplinary_ticket) VALUES ('".$result['sl_no']."','".$result['hostel_id']."','".$result['student_id']."','".$result['room']."','".$_SESSION['roll']."',NOW(),5,1,'".$_SESSION['s_admin_username']."','".$_SESSION['Ticket_no']."')";
+															$query5="UPDATE room_allocation1 SET reason=5,end_date=NOW() WHERE sl_no='".$result['sl_no']."'";
+															$query_run4=mysql_query($query4,$db);
+															$query_run5=mysql_query($query5,$db);
+														}
+														?>
+															<script>
+																var r=confirm('<?php echo $mesg; ?>');
+																if (r == true) {
+																	window.location="index.php";
+																}
+																else
+																{
+																	window.location="index.php";
+																}
+															</script>
+															<?php
+													}
+													else
+													{
+														echo "Please Fill The Fields.";
+													}
+												}
+												else
+												{
+														echo "Please Submit First.";
+												}
+								}
+								?>
+						</div>

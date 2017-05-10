@@ -1,0 +1,8 @@
+.formarea li{width:64%}
+form ul{margin:0;padding:0;list-style-type:none}
+* html form ul{zoom:1}
+.info{display:inline-block;clear:both; text-align:center; width:64%;font-style:italic;}
+.info h2{font-weight:normal;font-size:160%;margin:0 0 5px 0;clear:left}
+.info div{font-size:95%;line-height:135%;color:#555}
+
+form li{margin:0;padding:16px 4% 19px 4%;clear:both;position:relative;}

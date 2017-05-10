@@ -1,0 +1,297 @@
+/* Website template by freewebsitetemplates.com */
+/*------------------------- Layout styles ------------------------*/ 
+body{
+	margin:0;
+
+	
+} 
+.page{
+width:1010px;
+margin-left:130px;
+}
+
+/*------------------------- Font ------------------------*/ 
+@font-face {
+    font-family: ' "Times New Roman", Times, serif';
+    src: url('rokkitt-regular-webfont.eot');
+    src: url('rokkitt-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('rokkitt-regular-webfont.woff') format('woff'),
+         url('rokkitt-regular-webfont.ttf') format('truetype'),
+         url('rokkitt-regular-webfont.svg# "Times New Roman", Times, serif') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/*------------------------- Header ------------------------*/ 
+.header{
+	background:url(../images/bl1.jpg) repeat 90px;
+	width:1010px;
+	margin:0 auto;
+	height:80px;
+	border:#000 thin groove;
+}
+.header a#logo{
+	display:block;
+	float:left;
+	outline:none;
+}
+.header a#logo img{
+	border:0;
+}
+.header ul{
+	margin:0;
+	list-style:none;
+	padding:13px 0 0;
+	float:right;
+}
+.header ul li{
+	float:left;
+	margin:0 0 0 63px;
+}
+.header ul li.selected a,.header ul li a:hover{
+	color:#f78117;
+}
+.header ul li a{
+	font-size:16px;
+	text-decoration:none;
+	color:#5e5e5e;
+	font-family: ' "Times New Roman", Times, serif';
+	outline:none;
+}
+
+/*------------------------- Body ------------------------*/ 
+.body{
+	width:1010px;
+	margin:0 auto;
+	padding-bottom:20px;
+	overflow:hidden;
+	min-height:380px;
+
+}
+.body div#featured{
+	min-height:337px;
+    padding-top:30px;
+	padding-bottom:30px;
+	padding-left:5px;
+	border:#000 thin groove;
+   background-image:url(../images/bg4.png) ; 
+     /* opacity:0.5;
+      fileter:alpha(opacity=40);transparency */
+
+}
+.body div#featured h3{
+	color:#009;
+	font-size:36px;
+	font-family: "Times New Roman", Times, serif;
+	margin:0 0 30px;
+	padding:40px 0 0;
+	font-weight:normal;
+}
+.body div#featured h2{
+	color:#009;
+	font-family: ' "Times New Roman", Times, serif';
+	margin:0 0 30px;
+	padding:40px 0 0;
+	font-weight:normal;
+}
+.body div#featured p{
+	color:#000;
+	font-family: ' "Times New Roman", Times, serif';
+	font-size:20px;
+	line-height:25px;
+	text-shadow: 0 1px 0 #666;
+	text-align:justify;
+	margin:0;
+}
+
+.body div#featured input{
+	border:0;
+	font-family: ' "Times New Roman", Times, serif';
+}
+
+.body h3{
+	font-family: ' "Times New Roman", Times, serif';
+	font-size:16px;
+	font-weight:bold;
+	color:#636363;
+	margin:15px 0 0;
+	line-height:21px;
+}
+.body p{
+	font-family: ' "Times New Roman", Times, serif';
+	font-size:16px;
+	text-align:justify;
+	color:#000;
+	margin:0 0 20px;
+	line-height:21px;
+}
+.body p a{
+	outline:none;
+	color:#636363;
+}
+.body div#featured ul{
+	list-style:none;
+        margin:0;
+        padding:0;
+	overflow:hidden;
+}
+.body div#featured ul li{
+     	font-size:18px;
+        cursor: pointer;
+
+}
+.body ul{
+	list-style:none;
+        margin:0;
+        padding:0;
+	overflow:hidden;
+}
+.body ul li{
+        color:#009;
+	font-family: ' "Times New Roman", Times, serif';
+	font-size:18px;
+
+}
+
+/*------------------------- Footer ------------------------*/ 
+.footer{
+	width:1010px;
+	background:url(../images/bl1.jpg) repeat scroll 0% 0% transparent ; ;
+	padding:40px 10px 20px;
+	margin:0 auto;
+	overflow:hidden;
+	height:15px;
+}
+.footer ul{
+	list-style:none;
+	margin:0 0 0 60px;
+	padding:0 auto;
+	overflow:hidden;
+	float:left;
+}
+.footer ul li:first-child a{
+	border:none;
+	padding:0 6px 0 0;
+}
+.footer ul li{
+	float:left;
+}
+.footer ul li a:hover{
+	color:#F78117;
+}
+.footer ul li a{
+	border-width: 1px;
+	border-color:#5b5b5b;
+	border-style: none none none solid;
+	color:#5b5b5b;
+	font-size:10px;
+	font-family: Trebuchet MS;
+	text-decoration:none;
+	font-weight:bold;
+	padding:0 13px;
+	outline:none;
+}
+.footer p{
+	color:#5b5b5b;
+	font-size:10px;
+	font-family: Trebuchet MS;
+	font-weight:bold;
+	float:left;
+	margin:6px 0 0 135px;
+}
+.footer div.connect{
+	float:left;
+	margin:1px 0 0 92px;
+	padding-top:15px
+}
+.footer div.connect a{
+	float:left;
+	outline:none;
+}
+.footer div.connect a#facebook{
+	width:27px;
+	height:28px;
+	display:block;
+	text-indent:-9999px;
+	background:url(../images/icons.gif) no-repeat;
+}
+.footer div.connect a#twitter{
+	width:36px;
+	height:28px;
+	display:block;
+	text-indent:-9999px;
+	background:url(../images/icons.gif) no-repeat 0 -48px;
+	margin:0 0 0 68px;
+}
+.footer div.connect a#vimeo{
+	width:32px;
+	height:28px;
+	display:block;
+	text-indent:-9999px;
+	background:url(../images/icons.gif) no-repeat 0 -96px;
+	margin:0 0 0 73px;
+}
+
+
+.previous {
+    outline:none;
+    cursor:pointer;
+    margin-left:215px;
+    vertical-align: bottom;
+    height: 10px;
+}
+.next {
+    outline:none;
+    cursor:pointer;
+    margin-left:215px;
+    vertical-align: top;
+    height: 10px;
+}
+
+#welcome{
+	text-transform:uppercase;
+	text-align:center;
+	text-decoration:underline;
+	text-shadow:#333;
+	font-size:18px;
+	color:#000;
+    padding-top:20px;
+	padding-bottom:20px;	
+	
+}
+	#thead{
+			font-size:24px;
+			color:#006;
+			text-decoration:underline;
+		    font-family:"Times New Roman", Times, serif;
+			font-style:italic;
+			text-align:center;
+			padding-left:300px;
+			margin-left:50px;
+
+			}
+
+.body div#featured div#noticontainer{
+	color:#000;
+	font-size:18px;
+	text-align:left;
+    padding-left: 0px;
+	width: auto;
+	border:1px dotted #000;
+	border-radius:8px;
+	text-align: left;
+}
+.body div#featured div#noticontainer label{
+	color:#009;
+	font-size:18px;
+	text-shadow: 0 1px 0 #fcfcfc;
+	text-wrap:normal;
+}
+
+/*
+.framestyle
+{
+opacity:0.5;
+fileter:alpha(opacity=40);transparency	
+
+}*/
