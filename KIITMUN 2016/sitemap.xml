@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+<url>
+  <loc>http://kiitmun.org/</loc>
+  <lastmod>2016-08-04T14:55:21+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>http://kiitmun.org/pages/information.html</loc>
+  <lastmod>2016-08-04T14:55:22+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>http://kiitmun.org/pages/applications.html</loc>
+  <lastmod>2016-08-04T14:55:22+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>http://kiitmun.org/pages/about.html</loc>
+  <lastmod>2016-08-04T14:55:22+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>http://kiitmun.org/docs/invitation.pdf</loc>
+  <lastmod>2016-08-02T09:53:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>http://kiitmun.org/partner.html</loc>
+  <lastmod>2016-08-04T14:55:23+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>http://kiitmun.org/index.html</loc>
+  <lastmod>2016-08-04T14:55:23+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+</urlset>

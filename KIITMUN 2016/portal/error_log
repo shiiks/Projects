@@ -1,0 +1,2 @@
+[06-Aug-2016 07:11:30 UTC] PHP Fatal error:  Call to undefined method USER::pressregister() in /home/kiitmun/public_html/portal/pressdelegate.php on line 43
+[06-Aug-2016 07:12:18 UTC] PHP Fatal error:  Call to undefined method USER::pressregister() in /home/kiitmun/public_html/portal/pressdelegate.php on line 43

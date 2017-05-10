@@ -1,0 +1,30 @@
+
+
+#slider {
+	list-style:none;
+	padding:0px
+}
+
+.slider-container { 
+ 
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px; 
+}
+
+#slider img { 
+	width:200px; 
+	height:125px; 
+	margin:0px; 
+	display:inline-block ; 
+	padding:10px;
+}
+
+#slider li {
+	width:210px;
+	padding:10px;
+}
+
+
+
+
