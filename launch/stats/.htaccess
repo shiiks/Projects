@@ -1,0 +1,7 @@
+AuthName "celtindia.org statistics"
+AuthType Basic
+AuthUserFile /home/celtindia/.stats-htpasswd
+require valid-user
+<Files .stats-htpasswd>
+deny from all
+</Files>
