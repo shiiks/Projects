@@ -3,9 +3,9 @@
 session_start();
 
 $DB_host = "localhost";
-$DB_user = "projectkiit";
-$DB_pass = "Sixstars918";
-$DB_name = "enotice";
+$DB_user = "okborxof";
+$DB_pass = "annalionhai";
+$DB_name = "okborxof_enotice";
 
 try
 {
