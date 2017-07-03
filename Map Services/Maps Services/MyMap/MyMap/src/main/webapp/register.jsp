@@ -75,7 +75,7 @@ if(name!=null || email!=null){
 	  				
 	  				
 	  				<div class="cbp-mc-submit-wrap"><button class="cbp-mc-submit" ng-click="adduser()">Register</button>
-	  				<button class="cbp-mc-submit" onclick="window.location='http://localhost:8080/MyMap/login.jsp';">Login</button>
+	  				<button class="cbp-mc-submit" onclick="window.location='login.jsp';">Login</button>
 	  				</div>
 				</form>
 			</div>
