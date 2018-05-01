@@ -401,7 +401,7 @@ else{
 $scope.id='<%
 int userid=(Integer)session.getAttribute("userid");
 out.print(userid);%>';
-     $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+     //$http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
        $http.get(urlBase + '/view/'+$scope.id).success(function(response) {
         $scope.users=response;
         
