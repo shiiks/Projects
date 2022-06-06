@@ -3,7 +3,7 @@
 *	201268
 */
 
-package com.bnymellon.lnd.mapsservices.controller;
+package com.company.path.mapsservices.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
