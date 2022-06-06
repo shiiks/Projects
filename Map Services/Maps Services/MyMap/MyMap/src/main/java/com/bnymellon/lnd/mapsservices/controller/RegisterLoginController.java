@@ -3,7 +3,7 @@
 *	201268
 */
 
-package com.bnymellon.lnd.mapsservices.controller;
+package com.company.path.mapsservices.controller;
 
 
 
@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bnymellon.lnd.mapsservices.model.User;
-import com.bnymellon.lnd.mapsservices.service.MapService;
+import com.company.path.mapsservices.model.User;
+import com.company.path.mapsservices.service.MapService;
 
 
 
