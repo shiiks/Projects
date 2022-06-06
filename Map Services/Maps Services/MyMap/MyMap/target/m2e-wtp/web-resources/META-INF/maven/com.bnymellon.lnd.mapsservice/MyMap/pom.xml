@@ -99,11 +99,11 @@
     <!-- <repositories>
 		<repository>
 			<id>thirdparty</id>
-			<url>http://nexus.bnymellon.net/nexus/content/repositories/thirdparty</url>
+			<url>http://nexus.company.path.net/nexus/content/repositories/thirdparty</url>
 		</repository>
 		<repository>
 			<id>central</id>
-			<url>http://nexus.bnymellon.net/nexus/content/repositories/central</url>
+			<url>http://nexus.company.path.net/nexus/content/repositories/central</url>
 		</repository>
 	</repositories> -->
     <build>
