@@ -3,7 +3,7 @@
 *	201268
 */
 
-package com.bnymellon.lnd.mapsservices.utility;
+package com.company.path.mapsservices.utility;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
