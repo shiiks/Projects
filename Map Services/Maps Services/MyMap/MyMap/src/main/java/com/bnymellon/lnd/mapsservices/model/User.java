@@ -1,4 +1,4 @@
-package com.bnymellon.lnd.mapsservices.model;
+package com.company.path.mapsservices.model;
 
 
 
