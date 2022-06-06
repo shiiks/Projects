@@ -3,7 +3,7 @@
 *	201268
 */
 
-package com.bnymellon.lnd.mapsservices.service;
+package com.company.path.mapsservices.service;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -17,8 +17,8 @@ import java.sql.SQLException;
 
 import org.springframework.stereotype.Service;
 
-import com.bnymellon.lnd.mapsservices.model.User;
-import com.bnymellon.lnd.mapsservices.utility.DBUtility;
+import com.company.path.mapsservices.model.User;
+import com.company.path.mapsservices.utility.DBUtility;
 
 @Service
 public class MapService {
